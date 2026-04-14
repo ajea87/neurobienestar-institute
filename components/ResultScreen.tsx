@@ -90,15 +90,18 @@ export default function ResultScreen({ score, level }: ResultScreenProps) {
     setIsSubmitting(true);
 
     try {
-      await fetch("/api/subscribe", {
+      const res = await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, score, level }),
       });
-      const stripeLink =
-        process.env.NEXT_PUBLIC_STRIPE_LINK ||
-        "https://buy.stripe.com/PLACEHOLDER";
-      window.location.href = stripeLink;
+      const data = await res.json();
+      if (data.success) {
+        const stripeLink = process.env.NEXT_PUBLIC_STRIPE_LINK;
+        window.location.href = stripeLink!;
+      } else {
+        setIsSubmitting(false);
+      }
     } catch {
       setIsSubmitting(false);
     }
