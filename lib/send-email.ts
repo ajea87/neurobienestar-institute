@@ -29,9 +29,12 @@ export async function sendProtocolEmail(email: string): Promise<void> {
   const { error: sendError } = await resend.emails.send({
     from: "IEN <protocolos@neurobienestar.institute>",
     to: email,
-    subject: "Tu Protocolo Nervio Vago — Instituto Español de Neurobienestar",
+    subject: "Tu acceso está aquí",
     html: `
       <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; color: #1A2326;">
+        <div style="display:none;max-height:0;overflow:hidden;">
+          En los próximos minutos tu sistema nervioso ya puede empezar a cambiar.
+        </div>
         <div style="background: #1C3D50; padding: 32px 40px; text-align: center;">
           <p style="color: #F4EFE6; font-size: 22px; letter-spacing: 0.15em; margin: 0;">IEN</p>
           <p style="color: rgba(244,239,230,0.5); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; margin: 4px 0 0;">neurobienestar.institute</p>

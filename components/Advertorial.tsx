@@ -287,7 +287,7 @@ export default function Advertorial() {
                   margin: 0,
                 }}
               >
-                ¿Te levantas cansada aunque hayas dormido? Tu cuerpo no está
+                ¿Te levantas con cansancio aunque hayas dormido? Tu cuerpo no está
                 roto.
                 <br />
                 Está enviando una señal que aún no has aprendido a leer.
@@ -340,7 +340,7 @@ export default function Advertorial() {
             Probablemente llevas meses — quizás años — con una sensación que no
             sabes exactamente cómo describir. No estás enferma. Las analíticas
             salen bien. El médico te dice que estás bien. Y sin embargo algo no
-            funciona del todo. Te despiertas cansada. Tu estómago reacciona
+            funciona del todo. Te despiertas con cansancio. Tu estómago reacciona
             cuando hay tensión. Tu mente no para cuando quieres dormir. Llevas
             el día en piloto automático.
           </p>

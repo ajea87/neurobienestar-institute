@@ -95,11 +95,36 @@ export default function GraciasPage() {
           tu carpeta de spam si no lo ves en 5 minutos.
         </p>
 
-        <p style={{ fontSize: '14px', color: '#8E9CA3', marginTop: '8px' }}>
-          Si no lo ves en 5 minutos, revisa la carpeta de spam
-          y márcalo como &ldquo;No es spam&rdquo; — así nos aseguramos
-          de que los siguientes lleguen directamente.
-        </p>
+        <div style={{
+          background: 'rgba(184,114,46,0.08)',
+          border: '1px solid rgba(184,114,46,0.3)',
+          borderLeft: '3px solid #B8722E',
+          borderRadius: '0 8px 8px 0',
+          padding: '16px 20px',
+          marginTop: '24px',
+          textAlign: 'left'
+        }}>
+          <p style={{
+            fontSize: '13px',
+            fontWeight: '500',
+            color: '#B8722E',
+            margin: '0 0 6px',
+            fontFamily: 'Georgia, serif'
+          }}>
+            ¿No ves el email en 5 minutos?
+          </p>
+          <p style={{
+            fontSize: '13px',
+            color: '#5F5E5A',
+            lineHeight: '1.7',
+            margin: '0',
+            fontFamily: 'Georgia, serif'
+          }}>
+            Revisa la carpeta de spam o correo no deseado
+            y márcalo como &ldquo;No es spam&rdquo;. Así nos aseguramos
+            de que los siguientes lleguen directamente a tu bandeja.
+          </p>
+        </div>
 
         <div style={{
           borderTop: '1px solid rgba(28,61,80,0.1)',

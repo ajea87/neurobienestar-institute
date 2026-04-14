@@ -6,7 +6,7 @@ import ResultScreen from "./ResultScreen";
 const QUESTIONS = [
   {
     domain: "Cansancio",
-    text: "¿Con qué frecuencia te levantas por la mañana sintiéndote ya cansada, aunque hayas dormido más de seis horas?",
+    text: "¿Con qué frecuencia te levantas por la mañana con cansancio, aunque hayas dormido más de seis horas?",
   },
   {
     domain: "Digestión",
@@ -22,7 +22,7 @@ const QUESTIONS = [
   },
   {
     domain: "Desconexión",
-    text: "¿Con qué frecuencia sientes que llevas el día en piloto automático, físicamente presente pero sin estar del todo conectada a lo que vives?",
+    text: "¿Con qué frecuencia sientes que llevas el día en piloto automático, físicamente presente pero sin estar del todo aquí?",
   },
 ];
 
