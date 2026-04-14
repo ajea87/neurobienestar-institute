@@ -241,13 +241,13 @@ export default function Advertorial() {
         >
           {/* Imagen de fondo */}
           <Image
-            src="/neural.jpg"
-            alt="Patrón neural, sistema nervioso autónomo"
+            src="/hero.jpg"
+            alt="Mujer descansando, fatiga crónica, nervio vago"
             fill
             priority
             style={{
               objectFit: "cover",
-              objectPosition: "center center",
+              objectPosition: "center 25%",
             }}
           />
 
