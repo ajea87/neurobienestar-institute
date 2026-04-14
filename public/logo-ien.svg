@@ -1,0 +1,26 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Tronco vertical -->
+  <path d="M100,16 C99,70 101,155 100,184"
+    stroke="#1C3D50" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+
+  <!-- Ramificaciones superiores -->
+  <path d="M100,60 C91,58 77,53 62,47"
+    stroke="#1C3D50" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M100,60 C109,58 123,53 138,47"
+    stroke="#1C3D50" stroke-width="4" fill="none" stroke-linecap="round"/>
+
+  <!-- Ramificación media derecha -->
+  <path d="M100,105 C111,103 128,107 144,114"
+    stroke="#1C3D50" stroke-width="4" fill="none" stroke-linecap="round"/>
+
+  <!-- Ramificaciones inferiores -->
+  <path d="M100,148 C90,151 75,158 59,165"
+    stroke="#1C3D50" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M100,148 C110,151 125,158 141,165"
+    stroke="#1C3D50" stroke-width="4" fill="none" stroke-linecap="round"/>
+
+  <!-- Nodos -->
+  <circle cx="100" cy="60"  r="6.5" fill="#1C3D50"/>
+  <circle cx="100" cy="105" r="6.5" fill="#1C3D50"/>
+  <circle cx="100" cy="148" r="6.5" fill="#1C3D50"/>
+</svg>
