@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { Level } from "./DiagnosticTest";
 import CountdownTimer from "./CountdownTimer";
 
@@ -72,17 +72,31 @@ export default function ResultScreen({ score, level }: ResultScreenProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [phase, setPhase] = useState<"normal" | "reveal" | "unlocked">("normal");
   const [expired, setExpired] = useState(false);
+  const priceRef = useRef<HTMLDivElement>(null);
 
   const result = RESULTS[level];
 
   useEffect(() => {
-    const t1 = setTimeout(() => setPhase("reveal"), 12000);
-    const t2 = setTimeout(() => setPhase("unlocked"), 12800);
-    return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-    };
-  }, []);
+    if (!priceRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && phase === "normal") {
+          const t1 = setTimeout(() => setPhase("reveal"), 6000);
+          const t2 = setTimeout(() => setPhase("unlocked"), 6800);
+          observer.disconnect();
+          return () => {
+            clearTimeout(t1);
+            clearTimeout(t2);
+          };
+        }
+      },
+      { threshold: 0.8 }
+    );
+
+    observer.observe(priceRef.current);
+    return () => observer.disconnect();
+  }, [phase]);
 
   const handleCTAClick = () => {
     setShowEmailForm(true);
@@ -212,7 +226,7 @@ export default function ResultScreen({ score, level }: ResultScreenProps) {
           <>
             {/* Fase normal: precio 19€ grande sin tachar */}
             {phase === "normal" && (
-              <div style={{ textAlign: "center", padding: "28px 0 12px" }}>
+              <div ref={priceRef} style={{ textAlign: "center", padding: "28px 0 12px" }}>
                 <div
                   style={{
                     fontSize: "11px",
@@ -275,23 +289,26 @@ export default function ResultScreen({ score, level }: ResultScreenProps) {
                 >
                   Precio fundador desbloqueado
                 </p>
-                <div style={{ display: "flex", alignItems: "baseline", gap: "10px" }}>
+                <div style={{ textAlign: "center", margin: "20px 0 16px" }}>
                   <span
                     style={{
-                      fontSize: "13px",
+                      fontSize: "22px",
                       color: "#8E9CA3",
                       textDecoration: "line-through",
-                      fontFamily: "var(--font-dm-sans)",
+                      marginRight: "16px",
+                      fontFamily: "Georgia, serif",
+                      verticalAlign: "middle",
                     }}
                   >
                     19€
                   </span>
                   <span
                     style={{
-                      fontSize: "22px",
-                      fontWeight: 600,
+                      fontSize: "48px",
+                      fontWeight: "400",
                       color: "#1C3D50",
-                      fontFamily: "var(--font-dm-sans)",
+                      fontFamily: "Georgia, serif",
+                      verticalAlign: "middle",
                     }}
                   >
                     7€
@@ -328,23 +345,26 @@ export default function ResultScreen({ score, level }: ResultScreenProps) {
                   >
                     Precio fundador desbloqueado
                   </p>
-                  <div style={{ display: "flex", alignItems: "baseline", gap: "10px" }}>
+                  <div style={{ textAlign: "center", margin: "20px 0 16px" }}>
                     <span
                       style={{
-                        fontSize: "13px",
+                        fontSize: "22px",
                         color: "#8E9CA3",
                         textDecoration: "line-through",
-                        fontFamily: "var(--font-dm-sans)",
+                        marginRight: "16px",
+                        fontFamily: "Georgia, serif",
+                        verticalAlign: "middle",
                       }}
                     >
                       19€
                     </span>
                     <span
                       style={{
-                        fontSize: "22px",
-                        fontWeight: 600,
+                        fontSize: "48px",
+                        fontWeight: "400",
                         color: "#1C3D50",
-                        fontFamily: "var(--font-dm-sans)",
+                        fontFamily: "Georgia, serif",
+                        verticalAlign: "middle",
                       }}
                     >
                       7€
