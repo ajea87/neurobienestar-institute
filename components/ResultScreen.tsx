@@ -65,6 +65,24 @@ const RESULTS = {
   },
 };
 
+const LEVEL_CONTENT = {
+  verde: {
+    revealText:
+      "El Instituto Español de Neurobienestar reserva este precio para quienes llegan antes de que el sistema se sature. Intervenir ahora cuesta menos esfuerzo que recuperarse después.",
+    cta: "Quiero el Protocolo ahora →",
+  },
+  amber: {
+    revealText:
+      "El Instituto Español de Neurobienestar reserva este precio para quienes llevan tiempo en activación crónica y han decidido que es el momento de hacer algo concreto al respecto.",
+    cta: "Activar mi nervio vago →",
+  },
+  rojo: {
+    revealText:
+      "El Instituto Español de Neurobienestar reserva este precio para quienes ya saben que esto no va a resolverse solo. El sistema nervioso responde cuando se le da la herramienta correcta.",
+    cta: "Empezar hoy →",
+  },
+};
+
 export default function ResultScreen({ score, level }: ResultScreenProps) {
   const [showEmailForm, setShowEmailForm] = useState(false);
   const [email, setEmail] = useState("");
@@ -75,6 +93,7 @@ export default function ResultScreen({ score, level }: ResultScreenProps) {
   const priceRef = useRef<HTMLDivElement>(null);
 
   const result = RESULTS[level];
+  const levelContent = LEVEL_CONTENT[level];
 
   useEffect(() => {
     if (!priceRef.current) return;
@@ -272,24 +291,35 @@ export default function ResultScreen({ score, level }: ResultScreenProps) {
                   border: "1px solid rgba(28,61,80,0.12)",
                   borderLeft: "3px solid #B8722E",
                   borderRadius: "0 6px 6px 0",
-                  padding: "12px 16px",
+                  padding: "16px 20px",
                   marginBottom: "16px",
                 }}
               >
                 <p
                   style={{
                     fontFamily: "var(--font-dm-sans)",
-                    fontSize: "12px",
+                    fontSize: "11px",
                     color: "#B8722E",
                     fontWeight: 600,
                     textTransform: "uppercase",
                     letterSpacing: "0.08em",
-                    margin: "0 0 4px",
+                    margin: "0 0 10px",
                   }}
                 >
-                  Precio fundador desbloqueado
+                  Precio de acceso diagnóstico desbloqueado
                 </p>
-                <div style={{ textAlign: "center", margin: "20px 0 16px" }}>
+                <p
+                  style={{
+                    fontFamily: "var(--font-dm-sans)",
+                    fontSize: "13px",
+                    color: "#5F5E5A",
+                    lineHeight: 1.7,
+                    margin: "0 0 16px",
+                  }}
+                >
+                  {levelContent.revealText}
+                </p>
+                <div style={{ textAlign: "center", margin: "16px 0 0" }}>
                   <span
                     style={{
                       fontSize: "22px",
@@ -328,24 +358,35 @@ export default function ResultScreen({ score, level }: ResultScreenProps) {
                     border: "1px solid rgba(28,61,80,0.12)",
                     borderLeft: "3px solid #B8722E",
                     borderRadius: "0 6px 6px 0",
-                    padding: "12px 16px",
+                    padding: "16px 20px",
                     marginBottom: "16px",
                   }}
                 >
                   <p
                     style={{
                       fontFamily: "var(--font-dm-sans)",
-                      fontSize: "12px",
+                      fontSize: "11px",
                       color: "#B8722E",
                       fontWeight: 600,
                       textTransform: "uppercase",
                       letterSpacing: "0.08em",
-                      margin: "0 0 4px",
+                      margin: "0 0 10px",
                     }}
                   >
-                    Precio fundador desbloqueado
+                    Precio de acceso diagnóstico desbloqueado
                   </p>
-                  <div style={{ textAlign: "center", margin: "20px 0 16px" }}>
+                  <p
+                    style={{
+                      fontFamily: "var(--font-dm-sans)",
+                      fontSize: "13px",
+                      color: "#5F5E5A",
+                      lineHeight: 1.7,
+                      margin: "0 0 16px",
+                    }}
+                  >
+                    {levelContent.revealText}
+                  </p>
+                  <div style={{ textAlign: "center", margin: "16px 0 0" }}>
                     <span
                       style={{
                         fontSize: "22px",
@@ -378,6 +419,7 @@ export default function ResultScreen({ score, level }: ResultScreenProps) {
                     fontSize: "13px",
                     color: result.ctaColor,
                     marginBottom: "14px",
+                    textAlign: "center",
                   }}
                 >
                   Acceso inmediato · PDF descargable · 7€ pago único
@@ -394,10 +436,12 @@ export default function ResultScreen({ score, level }: ResultScreenProps) {
                     fontWeight: 500,
                     border: "none",
                     cursor: "pointer",
-                    display: "inline-block",
+                    display: "block",
+                    width: "100%",
+                    textAlign: "center",
                   }}
                 >
-                  {result.ctaButton}
+                  {levelContent.cta}
                 </button>
               </div>
             )}
@@ -448,11 +492,13 @@ export default function ResultScreen({ score, level }: ResultScreenProps) {
                     fontWeight: 500,
                     border: "none",
                     cursor: "pointer",
-                    display: "inline-block",
+                    display: "block",
+                    width: "100%",
+                    textAlign: "center",
                     marginTop: "12px",
                   }}
                 >
-                  {result.ctaButton}
+                  {levelContent.cta}
                 </button>
               </div>
             )}
