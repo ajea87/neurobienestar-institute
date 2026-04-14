@@ -241,13 +241,13 @@ export default function Advertorial() {
         >
           {/* Imagen de fondo */}
           <Image
-            src="/hero.jpg"
-            alt="Mujer descansando, fatiga crónica, nervio vago"
+            src="/neural.jpg"
+            alt="Patrón neural, sistema nervioso autónomo"
             fill
             priority
             style={{
               objectFit: "cover",
-              objectPosition: "center 40%",
+              objectPosition: "center center",
             }}
           />
 
@@ -257,7 +257,7 @@ export default function Advertorial() {
               position: "absolute",
               inset: 0,
               background:
-                "linear-gradient(to bottom, rgba(28,61,80,0.1) 0%, rgba(28,61,80,0.6) 100%)",
+                "linear-gradient(to bottom, rgba(28,61,80,0.2) 0%, rgba(28,61,80,0.75) 100%)",
             }}
           />
 
