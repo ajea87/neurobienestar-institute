@@ -338,7 +338,7 @@ export default function Advertorial() {
           {/* Párrafos 1–2 */}
           <p style={{ marginBottom: "24px" }}>
             Probablemente llevas meses — quizás años — con una sensación que no
-            sabes exactamente cómo describir. No estás enferma. Las analíticas
+            sabes exactamente cómo describir. Las analíticas
             salen bien. El médico te dice que estás bien. Y sin embargo algo no
             funciona del todo. Te despiertas con cansancio. Tu estómago reacciona
             cuando hay tensión. Tu mente no para cuando quieres dormir. Llevas
