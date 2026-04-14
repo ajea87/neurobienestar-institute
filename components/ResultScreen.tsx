@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Level } from "./DiagnosticTest";
+import CountdownTimer from "./CountdownTimer";
 
 interface ResultScreenProps {
   score: number;
@@ -170,6 +171,24 @@ export default function ResultScreen({ score, level }: ResultScreenProps) {
         ))}
       </div>
 
+      {/* Identity Stack */}
+      <p
+        style={{
+          fontSize: "15px",
+          fontFamily: "var(--font-cormorant)",
+          fontStyle: "italic",
+          color: "#1C3D50",
+          lineHeight: 1.75,
+          margin: "0 0 24px",
+          borderLeft: "3px solid #2B7A8B",
+          paddingLeft: "16px",
+        }}
+      >
+        &ldquo;Las personas que trabajan con el Método MAV no son las que tienen
+        más tiempo. Son las que han decidido que el cansancio crónico no es su
+        estado natural.&rdquo;
+      </p>
+
       {/* CTA Box */}
       <div
         style={{
@@ -180,6 +199,46 @@ export default function ResultScreen({ score, level }: ResultScreenProps) {
       >
         {!showEmailForm ? (
           <>
+            {/* Timer evergreen */}
+            <CountdownTimer />
+
+            {/* Precio tachado + precio fundador */}
+            <div style={{ marginBottom: "12px" }}>
+              <span
+                style={{
+                  fontSize: "13px",
+                  color: "#8E9CA3",
+                  textDecoration: "line-through",
+                  marginRight: "10px",
+                  fontFamily: "var(--font-dm-sans)",
+                }}
+              >
+                19€
+              </span>
+              <span
+                style={{
+                  fontSize: "18px",
+                  fontWeight: 500,
+                  color: "#1C3D50",
+                  fontFamily: "var(--font-dm-sans)",
+                }}
+              >
+                7€
+              </span>
+              <span
+                style={{
+                  fontSize: "11px",
+                  color: "#2B7A8B",
+                  marginLeft: "8px",
+                  fontFamily: "var(--font-dm-sans)",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.08em",
+                }}
+              >
+                Precio fundador
+              </span>
+            </div>
+
             <p
               style={{
                 fontFamily: "var(--font-dm-sans)",
