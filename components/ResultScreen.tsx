@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Level } from "./DiagnosticTest";
 import CountdownTimer from "./CountdownTimer";
 
@@ -70,8 +70,19 @@ export default function ResultScreen({ score, level }: ResultScreenProps) {
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [phase, setPhase] = useState<"normal" | "reveal" | "unlocked">("normal");
+  const [expired, setExpired] = useState(false);
 
   const result = RESULTS[level];
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setPhase("reveal"), 3500);
+    const t2 = setTimeout(() => setPhase("unlocked"), 4200);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, []);
 
   const handleCTAClick = () => {
     setShowEmailForm(true);
@@ -199,73 +210,209 @@ export default function ResultScreen({ score, level }: ResultScreenProps) {
       >
         {!showEmailForm ? (
           <>
-            {/* Timer evergreen */}
-            <CountdownTimer />
+            {/* Fase normal: precio tachado sin revelar descuento */}
+            {phase === "normal" && (
+              <div style={{ marginBottom: "16px" }}>
+                <span
+                  style={{
+                    fontSize: "13px",
+                    color: "#8E9CA3",
+                    textDecoration: "line-through",
+                    fontFamily: "var(--font-dm-sans)",
+                  }}
+                >
+                  19€
+                </span>
+              </div>
+            )}
 
-            {/* Precio tachado + precio fundador */}
-            <div style={{ marginBottom: "12px" }}>
-              <span
+            {/* Fase reveal: aparece el recuadro de precio especial */}
+            {phase === "reveal" && (
+              <div
+                className="slide-in"
                 style={{
-                  fontSize: "13px",
-                  color: "#8E9CA3",
-                  textDecoration: "line-through",
-                  marginRight: "10px",
-                  fontFamily: "var(--font-dm-sans)",
+                  background: "white",
+                  border: "1px solid rgba(28,61,80,0.12)",
+                  borderLeft: "3px solid #B8722E",
+                  borderRadius: "0 6px 6px 0",
+                  padding: "12px 16px",
+                  marginBottom: "16px",
                 }}
               >
-                19€
-              </span>
-              <span
-                style={{
-                  fontSize: "18px",
-                  fontWeight: 500,
-                  color: "#1C3D50",
-                  fontFamily: "var(--font-dm-sans)",
-                }}
-              >
-                7€
-              </span>
-              <span
-                style={{
-                  fontSize: "11px",
-                  color: "#2B7A8B",
-                  marginLeft: "8px",
-                  fontFamily: "var(--font-dm-sans)",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.08em",
-                }}
-              >
-                Precio fundador
-              </span>
-            </div>
+                <p
+                  style={{
+                    fontFamily: "var(--font-dm-sans)",
+                    fontSize: "12px",
+                    color: "#B8722E",
+                    fontWeight: 600,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.08em",
+                    margin: "0 0 4px",
+                  }}
+                >
+                  Precio fundador desbloqueado
+                </p>
+                <div style={{ display: "flex", alignItems: "baseline", gap: "10px" }}>
+                  <span
+                    style={{
+                      fontSize: "13px",
+                      color: "#8E9CA3",
+                      textDecoration: "line-through",
+                      fontFamily: "var(--font-dm-sans)",
+                    }}
+                  >
+                    19€
+                  </span>
+                  <span
+                    style={{
+                      fontSize: "22px",
+                      fontWeight: 600,
+                      color: "#1C3D50",
+                      fontFamily: "var(--font-dm-sans)",
+                    }}
+                  >
+                    7€
+                  </span>
+                </div>
+              </div>
+            )}
 
-            <p
-              style={{
-                fontFamily: "var(--font-dm-sans)",
-                fontSize: "13px",
-                color: result.ctaColor,
-                marginBottom: "14px",
-              }}
-            >
-              Acceso inmediato · PDF descargable · 7€ pago único
-            </p>
-            <button
-              onClick={handleCTAClick}
-              style={{
-                background: "#B8722E",
-                color: "#F4EFE6",
-                borderRadius: "30px",
-                padding: "14px 32px",
-                fontFamily: "var(--font-dm-sans)",
-                fontSize: "14px",
-                fontWeight: 500,
-                border: "none",
-                cursor: "pointer",
-                display: "inline-block",
-              }}
-            >
-              {result.ctaButton}
-            </button>
+            {/* Fase unlocked: timer + precio completo + botón */}
+            {phase === "unlocked" && !expired && (
+              <div className="fade-in-up">
+                <CountdownTimer onExpire={() => setExpired(true)} />
+
+                <div
+                  style={{
+                    background: "white",
+                    border: "1px solid rgba(28,61,80,0.12)",
+                    borderLeft: "3px solid #B8722E",
+                    borderRadius: "0 6px 6px 0",
+                    padding: "12px 16px",
+                    marginBottom: "16px",
+                  }}
+                >
+                  <p
+                    style={{
+                      fontFamily: "var(--font-dm-sans)",
+                      fontSize: "12px",
+                      color: "#B8722E",
+                      fontWeight: 600,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.08em",
+                      margin: "0 0 4px",
+                    }}
+                  >
+                    Precio fundador desbloqueado
+                  </p>
+                  <div style={{ display: "flex", alignItems: "baseline", gap: "10px" }}>
+                    <span
+                      style={{
+                        fontSize: "13px",
+                        color: "#8E9CA3",
+                        textDecoration: "line-through",
+                        fontFamily: "var(--font-dm-sans)",
+                      }}
+                    >
+                      19€
+                    </span>
+                    <span
+                      style={{
+                        fontSize: "22px",
+                        fontWeight: 600,
+                        color: "#1C3D50",
+                        fontFamily: "var(--font-dm-sans)",
+                      }}
+                    >
+                      7€
+                    </span>
+                  </div>
+                </div>
+
+                <p
+                  style={{
+                    fontFamily: "var(--font-dm-sans)",
+                    fontSize: "13px",
+                    color: result.ctaColor,
+                    marginBottom: "14px",
+                  }}
+                >
+                  Acceso inmediato · PDF descargable · 7€ pago único
+                </p>
+                <button
+                  onClick={handleCTAClick}
+                  style={{
+                    background: "#B8722E",
+                    color: "#F4EFE6",
+                    borderRadius: "30px",
+                    padding: "14px 32px",
+                    fontFamily: "var(--font-dm-sans)",
+                    fontSize: "14px",
+                    fontWeight: 500,
+                    border: "none",
+                    cursor: "pointer",
+                    display: "inline-block",
+                  }}
+                >
+                  {result.ctaButton}
+                </button>
+              </div>
+            )}
+
+            {/* Estado expirado */}
+            {phase === "unlocked" && expired && (
+              <div
+                className="fade-in"
+                style={{
+                  background: "white",
+                  border: "1px solid rgba(28,61,80,0.12)",
+                  borderRadius: "6px",
+                  padding: "16px",
+                  marginBottom: "16px",
+                  textAlign: "center",
+                }}
+              >
+                <p
+                  style={{
+                    fontFamily: "var(--font-dm-sans)",
+                    fontSize: "13px",
+                    color: "#8E9CA3",
+                    margin: "0 0 4px",
+                  }}
+                >
+                  El precio fundador ha expirado.
+                </p>
+                <p
+                  style={{
+                    fontFamily: "var(--font-dm-sans)",
+                    fontSize: "22px",
+                    fontWeight: 600,
+                    color: "#1C3D50",
+                    margin: "0",
+                  }}
+                >
+                  19€
+                </p>
+                <button
+                  onClick={handleCTAClick}
+                  style={{
+                    background: "#1C3D50",
+                    color: "#F4EFE6",
+                    borderRadius: "30px",
+                    padding: "14px 32px",
+                    fontFamily: "var(--font-dm-sans)",
+                    fontSize: "14px",
+                    fontWeight: 500,
+                    border: "none",
+                    cursor: "pointer",
+                    display: "inline-block",
+                    marginTop: "12px",
+                  }}
+                >
+                  {result.ctaButton}
+                </button>
+              </div>
+            )}
           </>
         ) : (
           <form onSubmit={handleSubmit} className="fade-in">

@@ -1,41 +1,45 @@
 "use client";
 import { useState, useEffect } from "react";
 
-export default function CountdownTimer() {
-  const [timeLeft, setTimeLeft] = useState({
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
+interface CountdownTimerProps {
+  onExpire?: () => void;
+}
+
+const DURATION = 25 * 60;
+
+export default function CountdownTimer({ onExpire }: CountdownTimerProps) {
+  const [secondsLeft, setSecondsLeft] = useState<number>(() => {
+    if (typeof window === "undefined") return DURATION;
+    const stored = sessionStorage.getItem("ien_timer_end");
+    if (stored) {
+      const remaining = Math.floor((parseInt(stored) - Date.now()) / 1000);
+      return remaining > 0 ? remaining : 0;
+    }
+    const endTime = Date.now() + DURATION * 1000;
+    sessionStorage.setItem("ien_timer_end", endTime.toString());
+    return DURATION;
   });
 
   useEffect(() => {
-    const getMadridMidnight = () => {
-      const now = new Date();
-      const madridNow = new Date(
-        now.toLocaleString("en-US", { timeZone: "Europe/Madrid" })
-      );
-      const midnight = new Date(madridNow);
-      midnight.setHours(24, 0, 0, 0);
-      return midnight.getTime() - madridNow.getTime();
-    };
-
-    const updateTimer = () => {
-      const msLeft = getMadridMidnight();
-      if (msLeft <= 0) {
-        setTimeLeft({ hours: 0, minutes: 0, seconds: 0 });
-        return;
-      }
-      const hours = Math.floor(msLeft / (1000 * 60 * 60));
-      const minutes = Math.floor((msLeft % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((msLeft % (1000 * 60)) / 1000);
-      setTimeLeft({ hours, minutes, seconds });
-    };
-
-    updateTimer();
-    const interval = setInterval(updateTimer, 1000);
+    if (secondsLeft <= 0) {
+      onExpire?.();
+      return;
+    }
+    const interval = setInterval(() => {
+      setSecondsLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          onExpire?.();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
     return () => clearInterval(interval);
   }, []);
 
+  const minutes = Math.floor(secondsLeft / 60);
+  const seconds = secondsLeft % 60;
   const pad = (n: number) => n.toString().padStart(2, "0");
 
   return (
@@ -44,7 +48,7 @@ export default function CountdownTimer() {
         display: "flex",
         alignItems: "center",
         gap: "8px",
-        margin: "0 0 16px",
+        marginBottom: "12px",
         flexWrap: "wrap",
       }}
     >
@@ -55,55 +59,21 @@ export default function CountdownTimer() {
           fontFamily: "var(--font-dm-sans)",
         }}
       >
-        Precio fundador disponible hasta las 24:00 h de hoy
+        Precio fundador reservado durante:
       </span>
-      <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
-        {[
-          { val: pad(timeLeft.hours), label: "h" },
-          { val: pad(timeLeft.minutes), label: "m" },
-          { val: pad(timeLeft.seconds), label: "s" },
-        ].map((unit, i) => (
-          <div
-            key={i}
-            style={{ display: "flex", alignItems: "center", gap: "2px" }}
-          >
-            <span
-              style={{
-                background: "#1C3D50",
-                color: "#F4EFE6",
-                fontSize: "13px",
-                fontWeight: 500,
-                padding: "3px 7px",
-                borderRadius: "4px",
-                fontFamily: "monospace",
-                minWidth: "28px",
-                textAlign: "center",
-              }}
-            >
-              {unit.val}
-            </span>
-            <span
-              style={{
-                fontSize: "11px",
-                color: "#8E9CA3",
-                fontFamily: "var(--font-dm-sans)",
-              }}
-            >
-              {unit.label}
-            </span>
-            {i < 2 && (
-              <span
-                style={{
-                  color: "#1C3D50",
-                  fontWeight: 500,
-                  margin: "0 1px",
-                }}
-              >
-                :
-              </span>
-            )}
-          </div>
-        ))}
+      <div
+        style={{
+          background: "#1C3D50",
+          color: "#F4EFE6",
+          fontFamily: "monospace",
+          fontSize: "14px",
+          fontWeight: 600,
+          padding: "3px 10px",
+          borderRadius: "4px",
+          letterSpacing: "0.05em",
+        }}
+      >
+        {pad(minutes)}:{pad(seconds)}
       </div>
     </div>
   );
