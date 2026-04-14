@@ -76,8 +76,8 @@ export default function ResultScreen({ score, level }: ResultScreenProps) {
   const result = RESULTS[level];
 
   useEffect(() => {
-    const t1 = setTimeout(() => setPhase("reveal"), 3500);
-    const t2 = setTimeout(() => setPhase("unlocked"), 4200);
+    const t1 = setTimeout(() => setPhase("reveal"), 12000);
+    const t2 = setTimeout(() => setPhase("unlocked"), 12800);
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
@@ -210,19 +210,42 @@ export default function ResultScreen({ score, level }: ResultScreenProps) {
       >
         {!showEmailForm ? (
           <>
-            {/* Fase normal: precio tachado sin revelar descuento */}
+            {/* Fase normal: precio 19€ grande sin tachar */}
             {phase === "normal" && (
-              <div style={{ marginBottom: "16px" }}>
-                <span
+              <div style={{ textAlign: "center", padding: "28px 0 12px" }}>
+                <div
                   style={{
-                    fontSize: "13px",
+                    fontSize: "11px",
                     color: "#8E9CA3",
-                    textDecoration: "line-through",
-                    fontFamily: "var(--font-dm-sans)",
+                    letterSpacing: "0.12em",
+                    textTransform: "uppercase",
+                    marginBottom: "10px",
+                    fontFamily: "Georgia, serif",
+                  }}
+                >
+                  Acceso al Protocolo Nervio Vago
+                </div>
+                <div
+                  style={{
+                    fontSize: "48px",
+                    fontWeight: "400",
+                    color: "#1C3D50",
+                    fontFamily: "Georgia, serif",
+                    lineHeight: "1",
                   }}
                 >
                   19€
-                </span>
+                </div>
+                <div
+                  style={{
+                    fontSize: "12px",
+                    color: "#8E9CA3",
+                    marginTop: "8px",
+                    fontFamily: "Georgia, serif",
+                  }}
+                >
+                  Pago único · Acceso inmediato · PDF descargable
+                </div>
               </div>
             )}
 
