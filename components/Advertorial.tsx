@@ -241,13 +241,13 @@ export default function Advertorial() {
         >
           {/* Imagen de fondo */}
           <Image
-            src="/hero.jpg"
+            src="/hero-new.jpg"
             alt="Mujer descansando, fatiga crónica, nervio vago"
             fill
             priority
             style={{
               objectFit: "cover",
-              objectPosition: "center 25%",
+              objectPosition: "center center",
             }}
           />
 
@@ -257,7 +257,7 @@ export default function Advertorial() {
               position: "absolute",
               inset: 0,
               background:
-                "linear-gradient(to bottom, rgba(28,61,80,0.2) 0%, rgba(28,61,80,0.75) 100%)",
+                "linear-gradient(to bottom, rgba(28,61,80,0.1) 0%, rgba(28,61,80,0.65) 100%)",
             }}
           />
 
