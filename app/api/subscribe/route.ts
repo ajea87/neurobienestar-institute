@@ -1,8 +1,41 @@
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_ANON_KEY!
+);
+
 export async function POST(req: Request) {
-  const { email, score, level } = await req.json();
-  console.log("New lead:", { email, score, level });
-  // TODO: insert into supabase table 'leads' con campos: email, score, level, created_at
-  // const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!)
-  // await supabase.from('leads').insert({ email, score, level, created_at: new Date().toISOString() })
-  return Response.json({ success: true });
+  try {
+    const { email, score, level } = await req.json();
+
+    // Validar email
+    if (!email || !email.includes("@")) {
+      return Response.json(
+        { success: false, error: "Email inválido" },
+        { status: 400 }
+      );
+    }
+
+    // Guardar en Supabase
+    const { error } = await supabase
+      .from("leads")
+      .insert([{ email, score, level, paid: false }]);
+
+    if (error) {
+      console.error("Supabase error:", error);
+      return Response.json(
+        { success: false, error: "Error al guardar" },
+        { status: 500 }
+      );
+    }
+
+    return Response.json({ success: true });
+  } catch (err) {
+    console.error("API error:", err);
+    return Response.json(
+      { success: false, error: "Error interno" },
+      { status: 500 }
+    );
+  }
 }
