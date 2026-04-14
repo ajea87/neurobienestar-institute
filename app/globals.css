@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ien-blue:   #1C3D50;
+  --ien-teal:   #2B7A8B;
+  --ien-cream:  #F4EFE6;
+  --ien-amber:  #B8722E;
+  --ien-carbon: #1A2326;
+  --ien-gray:   #8E9CA3;
+}
+
+body {
+  background: var(--ien-cream);
+  color: var(--ien-carbon);
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes questionIn {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.fade-up {
+  animation: fadeUp 600ms ease forwards;
+}
+
+.question-in {
+  animation: questionIn 250ms ease forwards;
+}
+
+.fade-in {
+  animation: fadeIn 400ms ease forwards;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
