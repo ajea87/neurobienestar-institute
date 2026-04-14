@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ResultScreen from "./ResultScreen";
+import { events } from "@/lib/meta-pixel";
 
 const QUESTIONS = [
   {
@@ -49,6 +50,10 @@ export default function DiagnosticTest() {
   const [showResult, setShowResult] = useState(false);
   const [questionKey, setQuestionKey] = useState(0);
 
+  useEffect(() => {
+    events.viewContent();
+  }, []);
+
   const progress = ((currentQuestion) / QUESTIONS.length) * 100;
 
   const handleSelect = (value: number) => {
@@ -66,6 +71,7 @@ export default function DiagnosticTest() {
         setQuestionKey((k) => k + 1);
         setIsTransitioning(false);
       } else {
+        events.lead();
         setShowResult(true);
       }
     }, 300);

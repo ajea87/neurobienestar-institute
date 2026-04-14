@@ -1,4 +1,12 @@
+"use client";
+
+import { useEffect } from "react";
+import { events } from "@/lib/meta-pixel";
+
 export default function GraciasPage() {
+  useEffect(() => {
+    events.purchase();
+  }, []);
   return (
     <div style={{
       minHeight: '100vh',

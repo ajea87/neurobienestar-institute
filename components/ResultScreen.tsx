@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import type { Level } from "./DiagnosticTest";
 import CountdownTimer from "./CountdownTimer";
+import { events } from "@/lib/meta-pixel";
 
 interface ResultScreenProps {
   score: number;
@@ -118,6 +119,7 @@ export default function ResultScreen({ score, level }: ResultScreenProps) {
   }, [phase]);
 
   const handleCTAClick = () => {
+    events.initiateCheckout();
     setShowEmailForm(true);
   };
 
@@ -142,6 +144,7 @@ export default function ResultScreen({ score, level }: ResultScreenProps) {
       });
       const data = await res.json();
       if (data.success) {
+        events.completeRegistration(level);
         const stripeLink = process.env.NEXT_PUBLIC_STRIPE_LINK;
         window.location.href = stripeLink!;
       } else {
