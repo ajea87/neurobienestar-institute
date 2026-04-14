@@ -237,12 +237,7 @@ export default function Advertorial() {
         style={{ animationDelay: "100ms", opacity: 0 }}
       >
         <div
-          style={{
-            width: "100%",
-            position: "relative",
-            overflow: "hidden",
-          }}
-          className="h-[380px] md:h-[480px]"
+          className="relative h-[420px] md:h-[560px] overflow-hidden"
         >
           {/* Imagen de fondo */}
           <Image
@@ -252,7 +247,7 @@ export default function Advertorial() {
             priority
             style={{
               objectFit: "cover",
-              objectPosition: "center 35%",
+              objectPosition: "center 40%",
             }}
           />
 
