@@ -95,6 +95,12 @@ export default function GraciasPage() {
           tu carpeta de spam si no lo ves en 5 minutos.
         </p>
 
+        <p style={{ fontSize: '14px', color: '#8E9CA3', marginTop: '8px' }}>
+          Si no lo ves en 5 minutos, revisa la carpeta de spam
+          y márcalo como &ldquo;No es spam&rdquo; — así nos aseguramos
+          de que los siguientes lleguen directamente.
+        </p>
+
         <div style={{
           borderTop: '1px solid rgba(28,61,80,0.1)',
           borderBottom: '1px solid rgba(28,61,80,0.1)',
