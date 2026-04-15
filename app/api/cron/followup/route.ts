@@ -159,9 +159,9 @@ export async function GET(req: Request) {
   const now = new Date()
   const results = { email2: 0, email3: 0, errors: 0 }
 
-  // Email 2: leads entre 3 y 5 horas, sequence = 0
+  // Email 2: leads con más de 3h desde primer email, sequence = 0
+  // Sin límite superior: cron diario, no podemos perder leads entre ejecuciones
   const threeHoursAgo = new Date(now.getTime() - 3 * 60 * 60 * 1000)
-  const fiveHoursAgo = new Date(now.getTime() - 5 * 60 * 60 * 1000)
 
   const { data: leads2 } = await supabase
     .from('leads')
@@ -169,7 +169,6 @@ export async function GET(req: Request) {
     .eq('paid', false)
     .eq('email_sequence', 0)
     .neq('level', 'directo')
-    .gte('first_email_at', fiveHoursAgo.toISOString())
     .lte('first_email_at', threeHoursAgo.toISOString())
 
   for (const lead of leads2 || []) {
@@ -192,9 +191,9 @@ export async function GET(req: Request) {
     }
   }
 
-  // Email 3: leads entre 22 y 26 horas, sequence = 1
-  const twentyTwoHoursAgo = new Date(now.getTime() - 22 * 60 * 60 * 1000)
-  const twentySixHoursAgo = new Date(now.getTime() - 26 * 60 * 60 * 1000)
+  // Email 3: leads con más de 24h desde primer email, sequence = 1
+  // Sin límite superior: cron diario, no podemos perder leads entre ejecuciones
+  const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000)
 
   const { data: leads3 } = await supabase
     .from('leads')
@@ -202,8 +201,7 @@ export async function GET(req: Request) {
     .eq('paid', false)
     .eq('email_sequence', 1)
     .neq('level', 'directo')
-    .gte('first_email_at', twentySixHoursAgo.toISOString())
-    .lte('first_email_at', twentyTwoHoursAgo.toISOString())
+    .lte('first_email_at', twentyFourHoursAgo.toISOString())
 
   for (const lead of leads3 || []) {
     try {
