@@ -33,10 +33,21 @@ export async function POST(req: Request) {
 
     if (email) {
       try {
-        await supabase
-          .from("leads")
-          .update({ paid: true })
-          .eq("email", email);
+        const { error: upsertError } = await supabase
+          .from('leads')
+          .upsert(
+            {
+              email,
+              score: 0,
+              level: 'directo',
+              paid: true
+            },
+            { onConflict: 'email' }
+          )
+
+        if (upsertError) {
+          console.error('Supabase upsert error:', upsertError)
+        }
 
         await sendProtocolEmail(email);
         console.log("PDF enviado a:", email);
