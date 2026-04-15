@@ -125,7 +125,7 @@ Esto no lo causa la falta de voluntad. Lo causa un nervio — el nervio vago —
 La buena noticia es que este nervio responde. Y lo hace rápido cuando sabes cómo tocarlo.
 <br><br>
 Si hay un momento para hacer esto, es ahora. Antes de que el nivel rojo sea el único que conozcas.`,
-    cta: 'Necesito este protocolo →',
+    cta: 'Empezar hoy →',
   },
 }
 
