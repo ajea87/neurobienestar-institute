@@ -21,7 +21,14 @@ export async function POST(req: Request) {
     // Guardar en Supabase
     const { error } = await supabase
       .from("leads")
-      .insert([{ email, score, level, paid: false }]);
+      .insert([{
+        email,
+        score,
+        level,
+        paid: false,
+        email_sequence: 0,
+        first_email_at: new Date().toISOString()
+      }]);
 
     if (error) {
       console.error("Supabase error:", error);
