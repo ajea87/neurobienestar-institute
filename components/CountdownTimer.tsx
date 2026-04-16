@@ -13,7 +13,9 @@ export default function CountdownTimer({ onExpire }: CountdownTimerProps) {
     const stored = sessionStorage.getItem("ien_timer_end");
     if (stored) {
       const remaining = Math.floor((parseInt(stored) - Date.now()) / 1000);
-      return remaining > 0 ? remaining : 0;
+      if (remaining > 0) return remaining;
+      // Si expiró, limpiar y empezar de nuevo
+      sessionStorage.removeItem("ien_timer_end");
     }
     const endTime = Date.now() + DURATION * 1000;
     sessionStorage.setItem("ien_timer_end", endTime.toString());
@@ -59,7 +61,7 @@ export default function CountdownTimer({ onExpire }: CountdownTimerProps) {
           fontFamily: "var(--font-dm-sans)",
         }}
       >
-        Precio fundador reservado durante:
+        Precio disponible durante:
       </span>
       <div
         style={{

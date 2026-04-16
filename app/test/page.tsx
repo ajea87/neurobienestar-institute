@@ -117,6 +117,21 @@ export default function TestPage() {
     }
   }
 
+  function handleStartTest() {
+    sessionStorage.removeItem('ien_timer_end')
+    setCurrentQuestion(0)
+    setAnswers([])
+    setPhase('test')
+    setSelectedAnswer(null)
+    setTransitioning(false)
+    setEmail('')
+    setEmailError('')
+    setScore(0)
+    setLevel('verde')
+    setTimerExpired(false)
+    setModalOpen(true)
+  }
+
   function closeModal() {
     setModalOpen(false)
     setCurrentQuestion(0)
@@ -271,7 +286,7 @@ export default function TestPage() {
           {/* ── BOTÓN CTA ── */}
           <button
             className="cta-btn"
-            onClick={() => setModalOpen(true)}
+            onClick={handleStartTest}
             style={{
               width: '100%',
               background: '#1C3D50',
@@ -580,10 +595,27 @@ export default function TestPage() {
                       {CTA[level]}
                     </button>
                   ) : (
-                    <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: '#888', textAlign: 'center', fontStyle: 'italic' }}>
-                      El precio de acceso diagnóstico ha expirado.<br />
-                      Complete el test de nuevo para desbloquearlo.
-                    </p>
+                    <div style={{ textAlign: 'center' }}>
+                      <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: '#888', fontStyle: 'italic', marginBottom: 12 }}>
+                        El precio de acceso ha expirado.
+                      </p>
+                      <button
+                        onClick={handleStartTest}
+                        style={{
+                          background: 'none',
+                          border: '1.5px solid #1C3D50',
+                          borderRadius: 4,
+                          padding: '12px 24px',
+                          fontFamily: "'DM Sans', sans-serif",
+                          fontSize: 13,
+                          color: '#1C3D50',
+                          cursor: 'pointer',
+                          width: '100%',
+                        }}
+                      >
+                        Repetir el test para desbloquear el precio →
+                      </button>
+                    </div>
                   )}
 
                   <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: '#999', textAlign: 'center', marginTop: 10 }}>
