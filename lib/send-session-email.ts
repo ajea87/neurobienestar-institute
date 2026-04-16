@@ -7,39 +7,44 @@ export async function sendMagicLinkEmail(email: string, token: string): Promise<
   const link = `${BASE_URL}/programa/auth?token=${token}`
 
   const html = `
-    <!DOCTYPE html>
-    <html lang="es">
-    <head><meta charset="UTF-8"></head>
-    <body style="margin:0;padding:0;background:#1A2326;font-family:Georgia,serif">
-      <div style="max-width:560px;margin:0 auto;padding:40px 20px">
-        <div style="text-align:center;margin-bottom:32px">
-          <div style="color:#F4EFE6;font-size:20px;letter-spacing:0.12em;font-family:Georgia,serif">IEN</div>
-          <div style="color:rgba(244,239,230,0.4);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;margin-top:4px">PROTOCOLO · 21 DÍAS</div>
+    <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; background: #F4EFE6;">
+
+      <div style="background: #1C3D50; padding: 32px 40px; text-align: center;">
+        <p style="color: #F4EFE6; font-size: 20px; letter-spacing: 0.12em; margin: 0;">IEN</p>
+        <p style="color: rgba(244,239,230,0.45); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; margin: 4px 0 0;">NEUROBIENESTAR.INSTITUTE</p>
+      </div>
+
+      <div style="background: #ffffff; padding: 40px 32px;">
+        <h1 style="font-size: 26px; font-weight: 400; color: #1C3D50; line-height: 1.3; margin: 0 0 24px;">
+          Tu acceso al Programa está listo.
+        </h1>
+
+        <p style="font-size: 15px; line-height: 1.8; color: #1A2326; margin: 0 0 32px;">
+          Pulsa el botón para entrar al portal.<br>
+          El enlace es válido durante 30 minutos.<br>
+          Si no lo solicitaste, ignora este correo.
+        </p>
+
+        <div style="text-align: center; margin: 32px 0;">
+          <a href="${link}"
+             style="background: #B8722E; color: #F4EFE6; padding: 16px 40px; border-radius: 6px; text-decoration: none; font-size: 15px; display: inline-block;">
+            Acceder al programa →
+          </a>
         </div>
-        <div style="background:#1C3D50;border-radius:12px;padding:40px 32px">
-          <p style="font-size:16px;color:#F4EFE6;line-height:1.8;margin:0 0 24px">
-            Tu enlace de acceso al Portal del Programa de 21 Días.
-          </p>
-          <p style="font-size:14px;color:rgba(244,239,230,0.7);line-height:1.8;margin:0 0 32px">
-            Pulsa el botón para entrar directamente. El enlace es válido durante 30 minutos.
-          </p>
-          <div style="text-align:center;margin:32px 0">
-            <a href="${link}"
-               style="background:#B8722E;color:#F4EFE6;padding:18px 48px;border-radius:30px;text-decoration:none;font-size:16px;display:inline-block;letter-spacing:0.03em">
-              Acceder al programa →
-            </a>
-          </div>
-          <p style="font-size:12px;color:rgba(244,239,230,0.35);text-align:center;margin:0;line-height:1.6">
-            Si no pediste este enlace, ignora este correo.<br>
-            El enlace expira en 30 minutos.
-          </p>
-        </div>
-        <p style="font-size:11px;color:rgba(244,239,230,0.2);text-align:center;margin-top:24px;line-height:1.6">
-          © 2025 Instituto Español de Neurobienestar · neurobienestar.institute
+
+        <p style="font-size: 12px; color: #8E9CA3; text-align: center; margin: 0; line-height: 1.6;">
+          El enlace expira en 30 minutos.
         </p>
       </div>
-    </body>
-    </html>
+
+      <div style="background: #1C3D50; padding: 20px 40px; text-align: center;">
+        <p style="font-family: sans-serif; font-size: 11px; color: rgba(244,239,230,0.4); margin: 0; line-height: 1.6;">
+          © 2025 Instituto Español de Neurobienestar<br>
+          neurobienestar.institute
+        </p>
+      </div>
+
+    </div>
   `
 
   await resend.emails.send({
