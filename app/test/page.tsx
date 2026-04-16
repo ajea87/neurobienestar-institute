@@ -38,24 +38,21 @@ const LEVEL_CONFIG: Record<Level, {
     pill: 'Nivel Verde · Señales tempranas',
     pillBg: 'rgba(34,197,94,0.1)', pillColor: '#166534',
     title: 'Su sistema nervioso todavía tiene margen.',
-    explanation:
-      'El nervio vago es el nervio más largo del cuerpo humano. Conecta el cerebro con el corazón, los pulmones y el sistema digestivo. Cuando tiene buen tono, el cuerpo sabe cómo salir del estado de alerta y recuperarse.\n\nLas señales que describió indican que su nervio vago ya está enviando avisos. No es una crisis — es la ventana correcta para actuar antes de que el sistema se sature.',
+    explanation: 'Su nervio vago envía señales tempranas de desequilibrio. El momento correcto para actuar es ahora, antes de que el sistema se sature.',
     cta: 'Acceder al Protocolo →',
   },
   amber: {
     pill: 'Nivel Ámbar · Activación crónica',
     pillBg: 'rgba(245,158,11,0.1)', pillColor: '#92400e',
     title: 'Su nervio vago lleva tiempo pidiendo atención.',
-    explanation:
-      'El nervio vago regula el sistema nervioso autónomo — el sistema que controla el descanso, la digestión y la recuperación sin que usted lo decida conscientemente.\n\nCuando está inhibido por estrés crónico sostenido, el cuerpo queda atrapado en modo alerta permanente. Lo que describió en el test encaja con precisión con ese patrón.',
+    explanation: 'Sus respuestas indican nervio vago inhibido en activación crónica. Tiene solución directa y precisa.',
     cta: 'Activar mi nervio vago →',
   },
   rojo: {
     pill: 'Nivel Rojo · Modo supervivencia',
     pillBg: 'rgba(239,68,68,0.08)', pillColor: '#991b1b',
     title: 'Su cuerpo lleva demasiado tiempo en alerta.',
-    explanation:
-      'El nervio vago inhibido es la causa más frecuente de cansancio crónico sin causa médica visible, digestión alterada por tensión emocional y dificultad para descansar aunque el cuerpo esté agotado.\n\nUn sistema nervioso en modo supervivencia sostenido no se regula solo con el tiempo. Necesita estimulación directa y precisa del nervio vago para recalibrar.',
+    explanation: 'Un sistema nervioso en modo supervivencia no se regula solo. Necesita la herramienta correcta, aplicada hoy.',
     cta: 'Empezar hoy →',
   },
 }
@@ -468,37 +465,56 @@ export default function TestPage() {
                 <div style={{
                   background: '#F0F4F8',
                   borderLeft: '3px solid #1C3D50',
-                  padding: 16,
-                  marginBottom: 14,
+                  padding: '12px 14px',
+                  marginBottom: 12,
                 }}>
-                  <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, color: '#1C3D50', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 10 }}>
+                  <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, color: '#1C3D50', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 8 }}>
                     Qué significa este resultado
                   </p>
-                  {cfg.explanation.split('\n\n').map((para, i) => (
-                    <p key={i} style={{
-                      fontFamily: "'Source Serif 4', Georgia, serif",
-                      fontSize: 14,
-                      color: '#333',
-                      lineHeight: 1.75,
-                      marginBottom: i < cfg.explanation.split('\n\n').length - 1 ? 12 : 0,
-                    }}>
-                      {para}
-                    </p>
-                  ))}
+                  <p style={{
+                    fontFamily: "'Source Serif 4', Georgia, serif",
+                    fontSize: 14,
+                    color: '#333',
+                    lineHeight: 1.65,
+                  }}>
+                    {cfg.explanation}
+                  </p>
                 </div>
 
                 {/* Lo que hace el protocolo */}
                 <p style={{
                   fontFamily: "'Source Serif 4', Georgia, serif",
-                  fontSize: 14,
+                  fontSize: 13,
                   color: '#555',
-                  lineHeight: 1.7,
+                  lineHeight: 1.6,
                 }}>
-                  El Protocolo Nervio Vago del IEN recoge las 7 técnicas de micro-activación vagal ordenadas por impacto. Cada técnica activa el nervio vago de forma directa, en menos de 3 minutos, sin equipamiento.
+                  El Protocolo IEN activa el nervio vago en menos de 3 minutos, sin equipamiento, con resultado perceptible desde el primer día.
                 </p>
               </div>
             )}
           </div>
+
+          {/* ── DESCRIPCIÓN PRODUCTO ── */}
+          {step === 'result' && (
+            <div style={{ borderTop: '0.5px solid #CCC', paddingTop: 16, marginTop: 16, marginBottom: 12 }}>
+              <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#888', marginBottom: 10 }}>
+                Lo que recibe
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {[
+                  'Protocolo Nervio Vago · PDF descargable',
+                  '7 técnicas MAV ordenadas por impacto',
+                  'Instrucciones exactas de aplicación',
+                  'Acceso inmediato tras el pago',
+                ].map((item, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: '#333', fontFamily: "'Source Serif 4', Georgia, serif" }}>
+                    <span style={{ color: '#2B7A8B', fontSize: 11, fontFamily: "'DM Sans', sans-serif" }}>✓</span>
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* ── CAJA PRECIO ── */}
           {step === 'result' && (
@@ -506,8 +522,8 @@ export default function TestPage() {
               background: 'white',
               border: '1px solid #CCC',
               borderTop: '3px solid #B8722E',
-              padding: 20,
-              marginTop: 16,
+              padding: 14,
+              marginTop: 0,
             }}>
               <p style={{
                 fontFamily: "'DM Sans', sans-serif",
@@ -553,12 +569,12 @@ export default function TestPage() {
                   marginBottom: 16,
                   textAlign: 'center',
                 }}>
-                  <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: 'rgba(244,239,230,0.7)', marginBottom: 2 }}>
+                  <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: 'rgba(244,239,230,0.7)', marginBottom: 2 }}>
                     Precio disponible durante
                   </p>
                   <p style={{
                     fontFamily: "'DM Sans', sans-serif",
-                    fontSize: 22,
+                    fontSize: 20,
                     fontWeight: 500,
                     color: '#F4EFE6',
                     letterSpacing: '0.05em',
@@ -586,7 +602,7 @@ export default function TestPage() {
                       color: 'white',
                       border: 'none',
                       borderRadius: 4,
-                      padding: 16,
+                      padding: 14,
                       fontFamily: "'DM Sans', sans-serif",
                       fontSize: 15,
                       fontWeight: 500,
