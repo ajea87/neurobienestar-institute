@@ -6,11 +6,11 @@ import { events } from '@/lib/meta-pixel'
 // ─── DATOS ────────────────────────────────────────────────────────────────────
 
 const QUESTIONS = [
-  '¿Se levanta cansado aunque haya dormido bien?',
-  '¿Su digestión empeora cuando está bajo tensión?',
-  '¿Nota tensión en cuello u hombros sin causa física?',
-  '¿Le cuesta apagar la mente para dormir?',
-  '¿Siente que funciona en piloto automático?',
+  '¿Se levanta cansado aunque haya dormido suficiente?',
+  '¿Su digestión empeora cuando hay tensión?',
+  '¿Nota tensión en cuello u hombros sin haber hecho esfuerzo?',
+  '¿Le cuesta apagar la mente cuando intenta dormir?',
+  '¿Siente que pasa el día presente pero sin estar del todo aquí?',
 ]
 
 const OPTIONS = [
