@@ -6,17 +6,17 @@ import { events } from '@/lib/meta-pixel'
 // ─── DATOS ────────────────────────────────────────────────────────────────────
 
 const QUESTIONS = [
-  '¿Con qué frecuencia se levanta con cansancio aunque haya dormido más de seis horas?',
-  '¿Su estómago o digestión empeora en momentos de tensión o nervios?',
-  '¿Se sorprende con los hombros tensos o la respiración corta sin esfuerzo físico?',
-  '¿Le cuesta apagar la mente cuando intenta dormir?',
-  '¿Siente que lleva el día en piloto automático, presente pero sin estar del todo aquí?',
+  '¿Se levanta cansado aunque haya dormido bien?',
+  '¿Su digestión empeora cuando está bajo tensión?',
+  '¿Nota tensión en cuello u hombros sin causa física?',
+  '¿Le cuesta apagar la mente para dormir?',
+  '¿Siente que funciona en piloto automático?',
 ]
 
 const OPTIONS = [
   { label: 'Casi nunca',     value: 1 },
   { label: 'A veces',        value: 2 },
-  { label: 'Con frecuencia', value: 3 },
+  { label: 'Frecuentemente', value: 3 },
   { label: 'Casi siempre',   value: 4 },
 ]
 
