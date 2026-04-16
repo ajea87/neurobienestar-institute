@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
+import CountdownTimer from '@/components/CountdownTimer'
 import { events } from '@/lib/meta-pixel'
 
 // ─── DATOS ────────────────────────────────────────────────────────────────────
 
-const QUESTIONS = [
+const preguntas = [
   '¿Se levanta cansado aunque haya dormido suficiente?',
   '¿Su digestión empeora cuando hay tensión?',
   '¿Nota tensión en cuello u hombros sin haber hecho esfuerzo?',
@@ -13,7 +14,7 @@ const QUESTIONS = [
   '¿Siente que pasa el día presente pero sin estar del todo aquí?',
 ]
 
-const OPTIONS = [
+const opciones = [
   { label: 'Casi nunca',     value: 1 },
   { label: 'A veces',        value: 2 },
   { label: 'Frecuentemente', value: 3 },
@@ -22,154 +23,120 @@ const OPTIONS = [
 
 type Level = 'verde' | 'amber' | 'rojo'
 
-function getLevel(s: number): Level {
+function calcLevel(s: number): Level {
   if (s <= 9)  return 'verde'
   if (s <= 14) return 'amber'
   return 'rojo'
 }
 
-const LEVEL_CONFIG: Record<Level, {
-  pill: string; pillBg: string; pillColor: string
-  title: string
-  explanation: string
-  cta: string
-}> = {
-  verde: {
-    pill: 'Nivel Verde · Señales tempranas',
-    pillBg: 'rgba(34,197,94,0.1)', pillColor: '#166534',
-    title: 'Su sistema nervioso todavía tiene margen.',
-    explanation: 'Su nervio vago envía señales tempranas de desequilibrio. El momento correcto para actuar es ahora, antes de que el sistema se sature.',
-    cta: 'Acceder al Protocolo →',
-  },
-  amber: {
-    pill: 'Nivel Ámbar · Activación crónica',
-    pillBg: 'rgba(245,158,11,0.1)', pillColor: '#92400e',
-    title: 'Su nervio vago lleva tiempo pidiendo atención.',
-    explanation: 'Sus respuestas indican nervio vago inhibido en activación crónica. Tiene solución directa y precisa.',
-    cta: 'Activar mi nervio vago →',
-  },
-  rojo: {
-    pill: 'Nivel Rojo · Modo supervivencia',
-    pillBg: 'rgba(239,68,68,0.08)', pillColor: '#991b1b',
-    title: 'Su cuerpo lleva demasiado tiempo en alerta.',
-    explanation: 'Un sistema nervioso en modo supervivencia no se regula solo. Necesita la herramienta correcta, aplicada hoy.',
-    cta: 'Empezar hoy →',
-  },
+const PILL: Record<Level, { label: string; bg: string; color: string }> = {
+  verde: { label: 'Nivel Verde · Señales tempranas',  bg: '#EAF3DE', color: '#27500A' },
+  amber: { label: 'Nivel Ámbar · Activación crónica', bg: '#FAEEDA', color: '#633806' },
+  rojo:  { label: 'Nivel Rojo · Modo supervivencia',  bg: '#FCEBEB', color: '#791F1F' },
 }
 
-const SESSION_KEY   = 'ien_test_timer_start'
-const TIMER_SECS    = 25 * 60
+const TITULO: Record<Level, string> = {
+  verde: 'Su sistema nervioso todavía tiene margen.',
+  amber: 'Su nervio vago lleva tiempo pidiendo atención.',
+  rojo:  'Su cuerpo lleva demasiado tiempo en alerta.',
+}
+
+const EXPLICACION: Record<Level, string> = {
+  verde: 'Su nervio vago ya envía señales de desequilibrio. El momento correcto para actuar es ahora, antes de que el sistema se sature.',
+  amber: 'Sus respuestas indican nervio vago inhibido en activación crónica. El cuerpo lleva tiempo en modo alerta sin poder salir solo.',
+  rojo:  'Un sistema nervioso en modo supervivencia sostenido no se regula solo. El nervio vago necesita estimulación directa y precisa para recalibrar.',
+}
+
+const REVEAL_TEXT: Record<Level, string> = {
+  verde: 'El IEN reserva este precio para quienes llegan antes de que el sistema se sature.',
+  amber: 'El IEN reserva este precio para quienes han decidido que es el momento de actuar.',
+  rojo:  'El IEN reserva este precio para quienes ya saben que esto no va a resolverse solo.',
+}
+
+const CTA: Record<Level, string> = {
+  verde: 'Acceder al Protocolo →',
+  amber: 'Activar mi nervio vago →',
+  rojo:  'Empezar hoy →',
+}
 
 // ─── COMPONENTE PRINCIPAL ─────────────────────────────────────────────────────
 
 export default function TestPage() {
 
-  // step: test → email → result
-  const [step, setStep]       = useState<'test' | 'email' | 'result'>('test')
-  const [currentQ, setCurrentQ] = useState(0)
-  const [scores, setScores]   = useState<number[]>([])
-  const [selected, setSelected] = useState<number | null>(null)
-  const [animKey, setAnimKey] = useState(0)
-
-  const [score, setScore]     = useState(0)
-  const [level, setLevel]     = useState<Level>('verde')
-
-  const [email, setEmail]     = useState('')
-  const [emailError, setEmailError] = useState('')
-  const [submitting, setSubmitting] = useState(false)
-
-  const [priceVisible, setPriceVisible] = useState(false)
-  const [timerLeft, setTimerLeft]       = useState(TIMER_SECS)
-  const [expired, setExpired]           = useState(false)
-
-  const priceRef  = useRef<HTMLDivElement>(null)
-  const resultRef = useRef<HTMLDivElement>(null)
-
-  // Fecha en español
+  // ── Fecha ──
   const dateStr = new Date().toLocaleDateString('es-ES', {
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
   })
   const dateDisplay = dateStr.charAt(0).toUpperCase() + dateStr.slice(1)
 
-  // ViewContent al cargar
+  // ── Modal state ──
+  const [modalOpen, setModalOpen]           = useState(false)
+  const [currentQuestion, setCurrentQuestion] = useState(0)
+  const [answers, setAnswers]               = useState<number[]>([])
+  const [phase, setPhase]                   = useState<'test' | 'email' | 'result'>('test')
+  const [email, setEmail]                   = useState('')
+  const [emailError, setEmailError]         = useState('')
+  const [score, setScore]                   = useState(0)
+  const [level, setLevel]                   = useState<Level>('verde')
+  const [submitting, setSubmitting]         = useState(false)
+  const [timerExpired, setTimerExpired]     = useState(false)
+  const [animKey, setAnimKey]               = useState(0)
+
+  // ── ViewContent al cargar ──
   useEffect(() => { events.viewContent() }, [])
 
-  // IntersectionObserver para revelar precio
+  // ── Body scroll lock ──
   useEffect(() => {
-    if (step !== 'result') return
-    const el = priceRef.current
-    if (!el) return
-    const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setPriceVisible(true); obs.disconnect() } },
-      { threshold: 0.2 }
-    )
-    obs.observe(el)
-    return () => obs.disconnect()
-  }, [step])
+    document.body.style.overflow = modalOpen ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [modalOpen])
 
-  // Timer de sesión cuando el precio es visible
-  useEffect(() => {
-    if (!priceVisible) return
-    let start = sessionStorage.getItem(SESSION_KEY)
-    if (!start) { start = Date.now().toString(); sessionStorage.setItem(SESSION_KEY, start) }
-    const tick = () => {
-      const rem = TIMER_SECS - Math.floor((Date.now() - parseInt(start!)) / 1000)
-      if (rem <= 0) { setTimerLeft(0); setExpired(true) } else { setTimerLeft(rem) }
+  // ── Handlers ──
+  function handleAnswer(value: number) {
+    const next = [...answers, value]
+    setAnswers(next)
+    if (next.length === 5) {
+      const total = next.reduce((a, b) => a + b, 0)
+      setScore(total)
+      events.lead()
+      setTimeout(() => setPhase('email'), 250)
+    } else {
+      setTimeout(() => { setCurrentQuestion(q => q + 1); setAnimKey(k => k + 1) }, 250)
     }
-    tick()
-    const iv = setInterval(tick, 1000)
-    return () => clearInterval(iv)
-  }, [priceVisible])
-
-  // Scroll al resultado cuando aparece
-  useEffect(() => {
-    if (step === 'result') {
-      setTimeout(() => resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100)
-    }
-  }, [step])
-
-  function fmt(s: number) {
-    return `${Math.floor(s / 60).toString().padStart(2, '0')}:${(s % 60).toString().padStart(2, '0')}`
   }
 
-  function handleOption(value: number) {
-    if (selected !== null) return
-    setSelected(value)
-    setTimeout(() => {
-      const next = [...scores, value]
-      if (currentQ < QUESTIONS.length - 1) {
-        setScores(next); setCurrentQ(q => q + 1); setSelected(null); setAnimKey(k => k + 1)
-      } else {
-        const total = next.reduce((a, b) => a + b, 0)
-        setScore(total); setLevel(getLevel(total))
-        setStep('email')
-        events.lead()
-      }
-    }, 250)
+  function closeModal() {
+    setModalOpen(false)
+    setCurrentQuestion(0)
+    setAnswers([])
+    setPhase('test')
+    setEmail('')
+    setEmailError('')
+    setAnimKey(0)
   }
 
   async function handleEmailSubmit() {
-    if (!email.includes('@')) { setEmailError('Introduzca un email válido'); return }
-    setEmailError(''); setSubmitting(true)
-    events.completeRegistration(level)
+    if (!email || !email.includes('@')) { setEmailError('Introduzca un email válido'); return }
+    setEmailError('')
+    setSubmitting(true)
+    const lvl = calcLevel(score)
+    setLevel(lvl)
     try {
       await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, score, level }),
+        body: JSON.stringify({ email, score, level: lvl }),
       })
+      events.completeRegistration(lvl)
     } catch {}
-    setStep('result')
+    setPhase('result')
     setSubmitting(false)
   }
 
-  function handlePay() {
+  function handlePayment() {
     events.initiateCheckout()
     window.location.href = process.env.NEXT_PUBLIC_STRIPE_LINK!
   }
-
-  const cfg = LEVEL_CONFIG[level]
-  const progress = (currentQ / QUESTIONS.length) * 100
 
   // ─── RENDER ───────────────────────────────────────────────────────────────────
 
@@ -179,25 +146,23 @@ export default function TestPage() {
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap');
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: #F5F0E8 !important; }
-        .fade-in-np { animation: fadeInUp 400ms ease forwards; }
-        @keyframes fadeInUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
-        .q-in { animation: qIn 250ms ease forwards; }
-        @keyframes qIn { from { opacity:0; transform:translateX(10px); } to { opacity:1; transform:translateX(0); } }
-        .opt-btn { transition: border-color 120ms ease, background 120ms ease; }
-        .opt-btn:hover { border-color: #1C3D50 !important; background: rgba(28,61,80,0.04) !important; }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+        .modal-fade { animation: fadeIn 300ms ease; }
+        .opt-btn { transition: border-color 120ms ease, background 120ms ease; cursor: pointer; }
+        .opt-btn:hover { border-color: #2B7A8B !important; background: rgba(43,122,139,0.04) !important; }
         @media (max-width: 640px) {
-          .hdr-inner { padding: 6px 20px 8px !important; }
-          .masthead-title { font-size: 20px !important; margin-bottom: 2px !important; }
-          .masthead-sub { font-size: 8px !important; }
-          .art-category { margin: 12px 0 8px !important; }
-          .art-h1 { font-size: 24px !important; line-height: 1.05 !important; margin-bottom: 8px !important; }
-          .art-lead { font-size: 13px !important; margin-bottom: 10px !important; }
-          .art-byline { margin: 0 0 10px !important; padding: 4px 0 !important; }
-          .art-byline p { font-size: 9px !important; }
-          .art-sep { margin: 6px 0 !important; }
-          .art-sep-text { margin-bottom: 8px !important; }
-          .test-box { padding: 12px 16px 16px !important; }
-          .test-header { margin-bottom: 8px !important; }
+          .hdr-inner         { padding: 6px 20px 8px !important; }
+          .masthead-title    { font-size: 24px !important; margin-bottom: 2px !important; }
+          .masthead-sub      { font-size: 9px !important; }
+          .art-category      { font-size: 11px !important; margin: 12px 0 8px !important; }
+          .art-h1            { font-size: 30px !important; line-height: 1.1 !important; margin-bottom: 14px !important; }
+          .art-lead          { font-size: 17px !important; line-height: 1.75 !important; color: #333 !important; margin-bottom: 10px !important; }
+          .art-byline p      { font-size: 11px !important; }
+          .art-byline        { margin: 0 0 10px !important; padding: 4px 0 !important; }
+          .art-sep           { margin: 6px 0 !important; }
+          .art-sep-text      { margin-bottom: 8px !important; }
+          .cta-btn           { font-size: 17px !important; padding: 20px !important; }
+          .cta-sub           { font-size: 12px !important; }
         }
       `}</style>
 
@@ -206,8 +171,6 @@ export default function TestPage() {
         {/* ── CABECERA PERIÓDICO ── */}
         <header style={{ background: 'white', borderTop: '3px solid #1C3D50', borderBottom: '2px solid #1A1A1A' }}>
           <div className="hdr-inner" style={{ maxWidth: 640, margin: '0 auto', padding: '10px 20px 12px' }}>
-
-            {/* Fila 1 — sección + fecha */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 8 }}>
               <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, color: '#666', textTransform: 'uppercase', letterSpacing: '0.15em' }}>
                 Salud · Neurociencia
@@ -216,10 +179,7 @@ export default function TestPage() {
                 {dateDisplay}
               </span>
             </div>
-
             <div style={{ borderTop: '0.5px solid #CCC', marginBottom: 10 }} />
-
-            {/* Fila 2 — masthead */}
             <div style={{ textAlign: 'center' }}>
               <p className="masthead-title" style={{
                 fontFamily: "'Playfair Display', Georgia, serif",
@@ -242,7 +202,6 @@ export default function TestPage() {
         {/* ── ARTÍCULO ── */}
         <div style={{ maxWidth: 640, margin: '0 auto', padding: '0 20px 48px' }}>
 
-          {/* Categoría */}
           <p className="art-category" style={{
             fontFamily: "'DM Sans', sans-serif",
             fontSize: 10,
@@ -257,7 +216,6 @@ export default function TestPage() {
             Diagnóstico · Sistema Nervioso Autónomo
           </p>
 
-          {/* H1 */}
           <h1 className="art-h1" style={{
             fontFamily: "'Playfair Display', Georgia, serif",
             fontSize: 'clamp(26px, 7vw, 38px)',
@@ -269,7 +227,6 @@ export default function TestPage() {
             El nervio que conecta su cerebro con su estómago lleva años intentando decirle algo
           </h1>
 
-          {/* Entradilla */}
           <p className="art-lead" style={{
             fontFamily: "'Source Serif 4', Georgia, serif",
             fontSize: 'clamp(14px, 3.5vw, 17px)',
@@ -281,19 +238,13 @@ export default function TestPage() {
             Una prueba de dos minutos determina si el nervio vago inhibido explica el cansancio, la digestión alterada y la dificultad para descansar.
           </p>
 
-          {/* Byline */}
-          <div className="art-byline" style={{
-            borderTop: '0.5px solid #CCC',
-            borderBottom: '0.5px solid #CCC',
-            padding: '6px 0',
-            marginBottom: 20,
-          }}>
+          <div className="art-byline" style={{ borderTop: '0.5px solid #CCC', borderBottom: '0.5px solid #CCC', padding: '6px 0', marginBottom: 20 }}>
             <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: '#888' }}>
               IEN · Neurociencia Clínica · {dateDisplay}
             </p>
           </div>
 
-          {/* ── SEPARADOR PERIÓDICO ── */}
+          {/* Separador */}
           <div className="art-sep" style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '8px 0 20px', opacity: 0.4 }}>
             <div style={{ flex: 1, height: 1, background: '#1C3D50' }} />
             <div style={{ width: 7, height: 7, background: '#1C3D50', transform: 'rotate(45deg)' }} />
@@ -304,73 +255,149 @@ export default function TestPage() {
             Complete el siguiente cuestionario diagnóstico
           </p>
 
-          {/* ── CAJA TEST ── */}
-          <div className="test-box" style={{
-            background: 'white',
-            border: '0.5px solid #CCC',
-            borderTop: '3px solid #1C3D50',
-            padding: 20,
-          }}>
-            <p className="test-header" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, color: '#1C3D50', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 16 }}>
-              Test Diagnóstico · Nervio Vago
-            </p>
+          {/* ── BOTÓN CTA ── */}
+          <button
+            className="cta-btn"
+            onClick={() => setModalOpen(true)}
+            style={{
+              width: '100%',
+              background: '#1C3D50',
+              color: '#F4EFE6',
+              border: 'none',
+              borderRadius: 4,
+              padding: '18px 20px',
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: 16,
+              fontWeight: 500,
+              cursor: 'pointer',
+              marginTop: 8,
+              marginBottom: 4,
+            }}
+          >
+            Iniciar test diagnóstico →
+          </button>
+          <p className="cta-sub" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: '#888', textAlign: 'center', margin: '0 0 24px' }}>
+            2 minutos · Gratuito · Resultado inmediato
+          </p>
+        </div>
 
-            {/* ── PREGUNTAS ── */}
-            {step === 'test' && (
-              <div key={animKey} className="q-in">
-                {/* Barra progreso */}
-                <div style={{ marginBottom: 18 }}>
-                  <div style={{ height: 3, background: '#EEE', overflow: 'hidden', marginBottom: 6 }}>
-                    <div style={{ height: '100%', width: `${progress}%`, background: '#1C3D50', transition: 'width 300ms ease' }} />
+        {/* ── FOOTER ── */}
+        <footer style={{ borderTop: '2px solid #1A1A1A', padding: '16px 20px', background: '#F5F0E8' }}>
+          <div style={{ maxWidth: 640, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 4 }}>
+            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: '#888' }}>Instituto Español de Neurobienestar</span>
+            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: '#888', textAlign: 'right' }}>© 2025 · neurobienestar.institute · Método MAV</span>
+          </div>
+        </footer>
+      </div>
+
+      {/* ════════════════════════════════════════════
+          MODAL PANTALLA COMPLETA
+      ════════════════════════════════════════════ */}
+      {modalOpen && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: '#F5F0E8',
+          zIndex: 1000,
+          overflowY: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+        }}>
+
+          {/* Header sticky */}
+          <div style={{
+            position: 'sticky',
+            top: 0,
+            background: '#1C3D50',
+            padding: '12px 20px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            zIndex: 10,
+            flexShrink: 0,
+          }}>
+            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: 'rgba(244,239,230,0.7)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+              Test Diagnóstico · Nervio Vago
+            </span>
+            <button
+              onClick={closeModal}
+              style={{ background: 'none', border: 'none', color: 'rgba(244,239,230,0.6)', fontSize: 20, cursor: 'pointer', padding: '4px 8px', lineHeight: 1 }}
+            >
+              ×
+            </button>
+          </div>
+
+          {/* Contenido modal */}
+          <div style={{ flex: 1, maxWidth: 560, margin: '0 auto', padding: '24px 20px 40px', width: '100%' }}>
+
+            {/* ── FASE TEST ── */}
+            {phase === 'test' && (
+              <div key={animKey} className="modal-fade">
+                {/* Progreso */}
+                <div style={{ marginBottom: 24 }}>
+                  <div style={{ height: 3, background: 'rgba(28,61,80,0.1)', borderRadius: 2, marginBottom: 6 }}>
+                    <div style={{
+                      height: '100%',
+                      width: `${(currentQuestion / 5) * 100}%`,
+                      background: '#2B7A8B',
+                      borderRadius: 2,
+                      transition: 'width 300ms ease',
+                    }} />
                   </div>
-                  <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: '#999', textAlign: 'right' }}>
-                    Pregunta {currentQ + 1} de {QUESTIONS.length}
-                  </p>
+                  <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: '#8E9CA3', textAlign: 'right' }}>
+                    Pregunta {currentQuestion + 1} de 5
+                  </div>
                 </div>
 
-                <p style={{ fontFamily: "'Source Serif 4', Georgia, serif", fontSize: 15, color: '#1A1A1A', lineHeight: 1.55, marginBottom: 18 }}>
-                  {QUESTIONS[currentQ]}
-                </p>
+                {/* Pregunta */}
+                <h2 style={{
+                  fontFamily: "'Playfair Display', Georgia, serif",
+                  fontSize: 22,
+                  fontWeight: 400,
+                  color: '#1A1A1A',
+                  lineHeight: 1.3,
+                  marginBottom: 28,
+                }}>
+                  {preguntas[currentQuestion]}
+                </h2>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {OPTIONS.map(opt => (
+                {/* Opciones */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {opciones.map((op, i) => (
                     <button
-                      key={opt.value}
+                      key={i}
                       className="opt-btn"
-                      onClick={() => handleOption(opt.value)}
+                      onClick={() => handleAnswer(op.value)}
                       style={{
-                        border: selected === opt.value ? '1.5px solid #1C3D50' : '1px solid #CCC',
-                        background: selected === opt.value ? 'rgba(28,61,80,0.06)' : 'transparent',
-                        padding: '12px 14px',
-                        fontFamily: "'DM Sans', sans-serif",
-                        fontSize: 13,
-                        color: '#1A1A1A',
-                        cursor: 'pointer',
-                        textAlign: 'left',
                         width: '100%',
-                        borderRadius: 2,
+                        textAlign: 'left',
+                        padding: '14px 16px',
+                        border: '1.5px solid rgba(28,61,80,0.18)',
+                        borderRadius: 6,
+                        background: 'white',
+                        fontFamily: "'DM Sans', sans-serif",
+                        fontSize: 14,
+                        color: '#1A2326',
                       }}
                     >
-                      {opt.label}
+                      {op.label}
                     </button>
                   ))}
                 </div>
               </div>
             )}
 
-            {/* ── CAPTURA EMAIL ── */}
-            {step === 'email' && (
-              <div className="fade-in-np">
-                <p style={{
-                  fontFamily: "'Source Serif 4', Georgia, serif",
-                  fontSize: 15,
-                  fontStyle: 'italic',
-                  color: '#333',
-                  textAlign: 'center',
-                  lineHeight: 1.65,
-                  marginBottom: 20,
-                }}>
-                  Introduzca su email para recibir<br />su diagnóstico personalizado
+            {/* ── FASE EMAIL ── */}
+            {phase === 'email' && (
+              <div className="modal-fade">
+                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: '#2B7A8B', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 16 }}>
+                  Test completado
+                </div>
+                <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 24, fontWeight: 400, color: '#1A1A1A', lineHeight: 1.2, marginBottom: 12 }}>
+                  Su diagnóstico está listo.
+                </h2>
+                <p style={{ fontFamily: "'Source Serif 4', Georgia, serif", fontSize: 15, color: '#555', lineHeight: 1.65, marginBottom: 24 }}>
+                  Introduzca su email para ver el resultado de su diagnóstico.
                 </p>
 
                 <input
@@ -381,18 +408,18 @@ export default function TestPage() {
                   placeholder="su@email.com"
                   style={{
                     width: '100%',
-                    border: emailError ? '1px solid #dc2626' : '1px solid #CCC',
+                    border: emailError ? '1.5px solid #dc2626' : '1.5px solid rgba(28,61,80,0.2)',
                     borderRadius: 4,
-                    padding: '12px 14px',
+                    padding: '14px 16px',
                     fontFamily: "'DM Sans', sans-serif",
-                    fontSize: 14,
-                    color: '#1A1A1A',
+                    fontSize: 15,
+                    color: '#1A2326',
                     background: 'white',
                     outline: 'none',
                     marginBottom: emailError ? 6 : 10,
                   }}
                   onFocus={e => { e.target.style.borderColor = '#1C3D50' }}
-                  onBlur={e => { e.target.style.borderColor = emailError ? '#dc2626' : '#CCC' }}
+                  onBlur={e => { e.target.style.borderColor = emailError ? '#dc2626' : 'rgba(28,61,80,0.2)' }}
                 />
                 {emailError && (
                   <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: '#dc2626', marginBottom: 10 }}>
@@ -405,244 +432,141 @@ export default function TestPage() {
                   disabled={submitting}
                   style={{
                     width: '100%',
-                    background: submitting ? '#3a6070' : '#1C3D50',
+                    background: submitting ? '#8E9CA3' : '#1C3D50',
                     color: 'white',
                     border: 'none',
                     borderRadius: 4,
-                    padding: 14,
+                    padding: 16,
                     fontFamily: "'DM Sans', sans-serif",
-                    fontSize: 14,
+                    fontSize: 15,
                     fontWeight: 500,
                     cursor: submitting ? 'not-allowed' : 'pointer',
-                    marginTop: 0,
-                    transition: 'background 150ms ease',
                   }}
                 >
-                  {submitting ? 'Un momento...' : 'Ver mi resultado →'}
+                  {submitting ? 'Un momento...' : 'Ver mi diagnóstico →'}
                 </button>
 
-                <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, color: '#999', textAlign: 'center', marginTop: 8 }}>
+                <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: '#999', textAlign: 'center', marginTop: 10 }}>
                   Sin spam. Puede darse de baja en cualquier momento.
                 </p>
               </div>
             )}
 
-            {/* ── RESULTADO ── */}
-            {step === 'result' && (
-              <div ref={resultRef} className="fade-in-np">
+            {/* ── FASE RESULTADO ── */}
+            {phase === 'result' && (
+              <div className="modal-fade">
 
                 {/* Pill nivel */}
-                <div style={{ marginBottom: 14 }}>
-                  <span style={{
-                    display: 'inline-block',
-                    background: cfg.pillBg,
-                    color: cfg.pillColor,
-                    fontSize: 9,
-                    fontFamily: "'DM Sans', sans-serif",
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.1em',
-                    fontWeight: 500,
-                    padding: '4px 12px',
-                    borderRadius: 2,
-                  }}>
-                    {cfg.pill}
-                  </span>
-                </div>
-
-                {/* Titular resultado */}
-                <h2 style={{
-                  fontFamily: "'Playfair Display', Georgia, serif",
-                  fontSize: 22,
-                  fontWeight: 700,
-                  color: '#1A1A1A',
-                  lineHeight: 1.25,
-                  marginBottom: 16,
+                <span style={{
+                  background: PILL[level].bg,
+                  color: PILL[level].color,
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: 10,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.1em',
+                  padding: '3px 12px',
+                  borderRadius: 20,
+                  display: 'inline-block',
+                  marginBottom: 14,
                 }}>
-                  {cfg.title}
+                  {PILL[level].label}
+                </span>
+
+                {/* Titular */}
+                <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 26, fontWeight: 700, color: '#1A1A1A', lineHeight: 1.15, marginBottom: 16 }}>
+                  {TITULO[level]}
                 </h2>
 
                 {/* Explicación */}
-                <div style={{
-                  background: '#F0F4F8',
-                  borderLeft: '3px solid #1C3D50',
-                  padding: '12px 14px',
-                  marginBottom: 12,
-                }}>
-                  <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, color: '#1C3D50', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 8 }}>
+                <div style={{ background: '#F0F4F8', borderLeft: '3px solid #1C3D50', padding: '14px 16px', marginBottom: 14 }}>
+                  <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#1C3D50', marginBottom: 8 }}>
                     Qué significa este resultado
-                  </p>
-                  <p style={{
-                    fontFamily: "'Source Serif 4', Georgia, serif",
-                    fontSize: 14,
-                    color: '#333',
-                    lineHeight: 1.65,
-                  }}>
-                    {cfg.explanation}
+                  </div>
+                  <p style={{ fontFamily: "'Source Serif 4', Georgia, serif", fontSize: 14, color: '#333', lineHeight: 1.7, margin: 0 }}>
+                    {EXPLICACION[level]}
                   </p>
                 </div>
 
-                {/* Lo que hace el protocolo */}
-                <p style={{
-                  fontFamily: "'Source Serif 4', Georgia, serif",
-                  fontSize: 13,
-                  color: '#555',
-                  lineHeight: 1.6,
-                }}>
-                  El Protocolo IEN activa el nervio vago en menos de 3 minutos, sin equipamiento, con resultado perceptible desde el primer día.
-                </p>
+                {/* Lo que recibe */}
+                <div style={{ borderTop: '0.5px solid #CCC', paddingTop: 14, marginBottom: 14 }}>
+                  <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#888', marginBottom: 10 }}>
+                    Lo que recibe
+                  </div>
+                  {[
+                    'Protocolo Nervio Vago · PDF descargable',
+                    '7 técnicas MAV ordenadas por impacto',
+                    'Instrucciones exactas de aplicación',
+                    'Acceso inmediato tras el pago',
+                  ].map((item, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6, fontFamily: "'Source Serif 4', Georgia, serif", fontSize: 13, color: '#333' }}>
+                      <span style={{ color: '#2B7A8B', fontSize: 12, flexShrink: 0 }}>✓</span>
+                      {item}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Caja precio */}
+                <div style={{ border: '1px solid #CCC', borderTop: '3px solid #B8722E', padding: 16, background: 'white' }}>
+                  <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#B8722E', marginBottom: 10 }}>
+                    Precio de acceso diagnóstico
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 6 }}>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: '#999', textDecoration: 'line-through' }}>
+                      Precio habitual: 19€
+                    </span>
+                    <span style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 42, color: '#1A1A1A', lineHeight: 1 }}>
+                      7€
+                    </span>
+                  </div>
+
+                  <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: '#888', margin: '0 0 14px' }}>
+                    Pago único · Acceso inmediato · PDF descargable
+                  </p>
+
+                  {/* Timer */}
+                  <CountdownTimer onExpire={() => setTimerExpired(true)} />
+
+                  {/* Reveal text */}
+                  <p style={{ fontFamily: "'Source Serif 4', Georgia, serif", fontSize: 13, color: '#555', lineHeight: 1.6, marginBottom: 14, fontStyle: 'italic' }}>
+                    {REVEAL_TEXT[level]}
+                  </p>
+
+                  {/* Botón o expirado */}
+                  {!timerExpired ? (
+                    <button
+                      onClick={handlePayment}
+                      style={{
+                        width: '100%',
+                        background: '#B8722E',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: 4,
+                        padding: 16,
+                        fontFamily: "'DM Sans', sans-serif",
+                        fontSize: 15,
+                        fontWeight: 500,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {CTA[level]}
+                    </button>
+                  ) : (
+                    <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: '#888', textAlign: 'center', fontStyle: 'italic' }}>
+                      El precio de acceso diagnóstico ha expirado.<br />
+                      Complete el test de nuevo para desbloquearlo.
+                    </p>
+                  )}
+
+                  <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: '#999', textAlign: 'center', marginTop: 10 }}>
+                    Garantía de devolución 30 días sin preguntas
+                  </p>
+                </div>
               </div>
             )}
           </div>
-
-          {/* ── DESCRIPCIÓN PRODUCTO ── */}
-          {step === 'result' && (
-            <div style={{ borderTop: '0.5px solid #CCC', paddingTop: 16, marginTop: 16, marginBottom: 12 }}>
-              <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#888', marginBottom: 10 }}>
-                Lo que recibe
-              </p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                {[
-                  'Protocolo Nervio Vago · PDF descargable',
-                  '7 técnicas MAV ordenadas por impacto',
-                  'Instrucciones exactas de aplicación',
-                  'Acceso inmediato tras el pago',
-                ].map((item, i) => (
-                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: '#333', fontFamily: "'Source Serif 4', Georgia, serif" }}>
-                    <span style={{ color: '#2B7A8B', fontSize: 11, fontFamily: "'DM Sans', sans-serif" }}>✓</span>
-                    {item}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* ── CAJA PRECIO ── */}
-          {step === 'result' && (
-            <div ref={priceRef} style={{
-              background: 'white',
-              border: '1px solid #CCC',
-              borderTop: '3px solid #B8722E',
-              padding: 14,
-              marginTop: 0,
-            }}>
-              <p style={{
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: 10,
-                color: '#B8722E',
-                textTransform: 'uppercase',
-                letterSpacing: '0.12em',
-                marginBottom: 14,
-              }}>
-                Precio de acceso diagnóstico
-              </p>
-
-              {/* Precios */}
-              <div style={{ textAlign: 'center', marginBottom: 8 }}>
-                <span style={{
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: 15,
-                  color: '#999',
-                  textDecoration: 'line-through',
-                  marginRight: 12,
-                }}>
-                  Precio habitual: 19€
-                </span>
-                <span style={{
-                  fontFamily: "'Playfair Display', Georgia, serif",
-                  fontSize: 42,
-                  fontWeight: 400,
-                  color: '#1A1A1A',
-                }}>
-                  7€
-                </span>
-              </div>
-
-              <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: '#888', textAlign: 'center', marginBottom: 16 }}>
-                Pago único · Acceso inmediato · PDF descargable
-              </p>
-
-              {/* Timer */}
-              {priceVisible && !expired && (
-                <div style={{
-                  background: '#1C3D50',
-                  padding: '10px 14px',
-                  marginBottom: 16,
-                  textAlign: 'center',
-                }}>
-                  <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: 'rgba(244,239,230,0.7)', marginBottom: 2 }}>
-                    Precio disponible durante
-                  </p>
-                  <p style={{
-                    fontFamily: "'DM Sans', sans-serif",
-                    fontSize: 20,
-                    fontWeight: 500,
-                    color: '#F4EFE6',
-                    letterSpacing: '0.05em',
-                  }}>
-                    {fmt(timerLeft)}
-                  </p>
-                </div>
-              )}
-
-              {/* Botón o expirado */}
-              {expired ? (
-                <div style={{ textAlign: 'center', padding: '16px 0' }}>
-                  <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: '#888', lineHeight: 1.6 }}>
-                    El precio de acceso diagnóstico ha expirado.<br />
-                    El Protocolo está disponible al precio estándar de 19€.
-                  </p>
-                </div>
-              ) : (
-                <>
-                  <button
-                    onClick={handlePay}
-                    style={{
-                      width: '100%',
-                      background: '#B8722E',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: 4,
-                      padding: 14,
-                      fontFamily: "'DM Sans', sans-serif",
-                      fontSize: 15,
-                      fontWeight: 500,
-                      cursor: 'pointer',
-                      transition: 'background 150ms ease',
-                    }}
-                  >
-                    {cfg.cta}
-                  </button>
-
-                  <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: '#888', textAlign: 'center', marginTop: 10 }}>
-                    Garantía de devolución 30 días sin preguntas
-                  </p>
-                </>
-              )}
-            </div>
-          )}
         </div>
-
-        {/* ── FOOTER PERIÓDICO ── */}
-        <footer style={{ borderTop: '2px solid #1A1A1A', padding: '16px 20px', background: '#F5F0E8' }}>
-          <div style={{
-            maxWidth: 640,
-            margin: '0 auto',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: 4,
-          }}>
-            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: '#888' }}>
-              Instituto Español de Neurobienestar
-            </span>
-            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: '#888', textAlign: 'right' }}>
-              © 2025 · neurobienestar.institute · Método MAV
-            </span>
-          </div>
-        </footer>
-
-      </div>
+      )}
     </>
   )
 }
