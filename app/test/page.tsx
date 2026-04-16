@@ -188,13 +188,27 @@ export default function TestPage() {
         @keyframes qIn { from { opacity:0; transform:translateX(10px); } to { opacity:1; transform:translateX(0); } }
         .opt-btn { transition: border-color 120ms ease, background 120ms ease; }
         .opt-btn:hover { border-color: #1C3D50 !important; background: rgba(28,61,80,0.04) !important; }
+        @media (max-width: 640px) {
+          .hdr-inner { padding: 6px 20px 8px !important; }
+          .masthead-title { font-size: 20px !important; margin-bottom: 2px !important; }
+          .masthead-sub { font-size: 8px !important; }
+          .art-category { margin: 12px 0 8px !important; }
+          .art-h1 { font-size: 24px !important; line-height: 1.05 !important; margin-bottom: 8px !important; }
+          .art-lead { font-size: 13px !important; margin-bottom: 10px !important; }
+          .art-byline { margin: 0 0 10px !important; padding: 4px 0 !important; }
+          .art-byline p { font-size: 9px !important; }
+          .art-sep { margin: 6px 0 !important; }
+          .art-sep-text { margin-bottom: 8px !important; }
+          .test-box { padding: 12px 16px 16px !important; }
+          .test-header { margin-bottom: 8px !important; }
+        }
       `}</style>
 
       <div style={{ background: '#F5F0E8', minHeight: '100vh', fontFamily: "'DM Sans', sans-serif" }}>
 
         {/* ── CABECERA PERIÓDICO ── */}
         <header style={{ background: 'white', borderTop: '3px solid #1C3D50', borderBottom: '2px solid #1A1A1A' }}>
-          <div style={{ maxWidth: 640, margin: '0 auto', padding: '10px 20px 12px' }}>
+          <div className="hdr-inner" style={{ maxWidth: 640, margin: '0 auto', padding: '10px 20px 12px' }}>
 
             {/* Fila 1 — sección + fecha */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 8 }}>
@@ -210,7 +224,7 @@ export default function TestPage() {
 
             {/* Fila 2 — masthead */}
             <div style={{ textAlign: 'center' }}>
-              <p style={{
+              <p className="masthead-title" style={{
                 fontFamily: "'Playfair Display', Georgia, serif",
                 fontSize: 'clamp(20px, 5.5vw, 28px)',
                 fontWeight: 400,
@@ -221,7 +235,7 @@ export default function TestPage() {
               }}>
                 Instituto Español de Neurobienestar
               </p>
-              <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, color: '#888', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+              <p className="masthead-sub" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, color: '#888', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
                 neurobienestar.institute · Neurociencia aplicada
               </p>
             </div>
@@ -232,7 +246,7 @@ export default function TestPage() {
         <div style={{ maxWidth: 640, margin: '0 auto', padding: '0 20px 48px' }}>
 
           {/* Categoría */}
-          <p style={{
+          <p className="art-category" style={{
             fontFamily: "'DM Sans', sans-serif",
             fontSize: 10,
             color: '#1C3D50',
@@ -247,7 +261,7 @@ export default function TestPage() {
           </p>
 
           {/* H1 */}
-          <h1 style={{
+          <h1 className="art-h1" style={{
             fontFamily: "'Playfair Display', Georgia, serif",
             fontSize: 'clamp(26px, 7vw, 38px)',
             fontWeight: 700,
@@ -259,7 +273,7 @@ export default function TestPage() {
           </h1>
 
           {/* Entradilla */}
-          <p style={{
+          <p className="art-lead" style={{
             fontFamily: "'Source Serif 4', Georgia, serif",
             fontSize: 'clamp(14px, 3.5vw, 17px)',
             fontWeight: 300,
@@ -267,40 +281,40 @@ export default function TestPage() {
             lineHeight: 1.7,
             marginBottom: 14,
           }}>
-            Una prueba diagnóstica de dos minutos puede determinar si el nervio vago inhibido explica el cansancio crónico, los problemas digestivos y la dificultad para descansar que millones de españoles normalizan erróneamente.
+            Una prueba de dos minutos determina si el nervio vago inhibido explica el cansancio, la digestión alterada y la dificultad para descansar.
           </p>
 
           {/* Byline */}
-          <div style={{
+          <div className="art-byline" style={{
             borderTop: '0.5px solid #CCC',
             borderBottom: '0.5px solid #CCC',
             padding: '6px 0',
             marginBottom: 20,
           }}>
             <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: '#888' }}>
-              Instituto Español de Neurobienestar · Departamento de Neurociencia Clínica · Actualizado {dateDisplay}
+              IEN · Neurociencia Clínica · {dateDisplay}
             </p>
           </div>
 
           {/* ── SEPARADOR PERIÓDICO ── */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '8px 0 20px', opacity: 0.4 }}>
+          <div className="art-sep" style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '8px 0 20px', opacity: 0.4 }}>
             <div style={{ flex: 1, height: 1, background: '#1C3D50' }} />
             <div style={{ width: 7, height: 7, background: '#1C3D50', transform: 'rotate(45deg)' }} />
             <div style={{ flex: 1, height: 1, background: '#1C3D50' }} />
           </div>
 
-          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: '#555', textAlign: 'center', fontStyle: 'italic', marginBottom: 16 }}>
+          <p className="art-sep-text" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: '#555', textAlign: 'center', fontStyle: 'italic', marginBottom: 16 }}>
             Complete el siguiente cuestionario diagnóstico
           </p>
 
           {/* ── CAJA TEST ── */}
-          <div style={{
+          <div className="test-box" style={{
             background: 'white',
             border: '0.5px solid #CCC',
             borderTop: '3px solid #1C3D50',
             padding: 20,
           }}>
-            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, color: '#1C3D50', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 16 }}>
+            <p className="test-header" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, color: '#1C3D50', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 16 }}>
               Test Diagnóstico · Nervio Vago
             </p>
 
