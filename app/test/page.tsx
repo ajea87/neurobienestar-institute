@@ -80,7 +80,6 @@ export default function TestPage() {
   const [level, setLevel]                   = useState<Level>('verde')
   const [submitting, setSubmitting]         = useState(false)
   const [timerExpired, setTimerExpired]     = useState(false)
-  const [animKey, setAnimKey]               = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
   const [transitioning, setTransitioning]   = useState(false)
 
@@ -114,7 +113,6 @@ export default function TestPage() {
         setSelectedAnswer(null)
         setTransitioning(false)
         setCurrentQuestion(q => q + 1)
-        setAnimKey(k => k + 1)
       }, 300)
     }
   }
@@ -126,7 +124,6 @@ export default function TestPage() {
     setPhase('test')
     setEmail('')
     setEmailError('')
-    setAnimKey(0)
     setSelectedAnswer(null)
     setTransitioning(false)
   }
