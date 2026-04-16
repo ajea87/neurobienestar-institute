@@ -196,7 +196,7 @@ export default function TestPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, score, level }),
       })
-    } catch (_) {}
+    } catch {}
 
     window.location.href = process.env.NEXT_PUBLIC_STRIPE_LINK!
   }
