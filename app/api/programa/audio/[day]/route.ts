@@ -2,15 +2,15 @@ import { createClient } from '@supabase/supabase-js'
 import { getSessionEmail } from '@/lib/programa-auth'
 import { PROGRAM_CONTENT } from '@/lib/programa-content'
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
-
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ day: string }> }
 ) {
+  const supabase = createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+
   const email = await getSessionEmail()
   if (!email) {
     return Response.json({ error: 'No autenticado' }, { status: 401 })
