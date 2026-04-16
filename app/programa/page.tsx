@@ -43,39 +43,77 @@ function LoginContent() {
       alignItems: 'center',
       justifyContent: 'center',
       padding: '24px',
-      fontFamily: 'Georgia, serif',
     }}>
+      <style>{`
+        .ien-input {
+          width: 100%;
+          padding: 14px 16px;
+          background: rgba(255,255,255,0.06);
+          border: 1px solid rgba(43,122,139,0.4);
+          border-radius: 8px;
+          color: #F4EFE6;
+          font-size: 15px;
+          margin-bottom: 16px;
+          box-sizing: border-box;
+          outline: none;
+          font-family: var(--font-dm-sans), sans-serif;
+          transition: border-color 150ms;
+        }
+        .ien-input:focus {
+          border-color: #2B7A8B;
+        }
+        .ien-input::placeholder {
+          color: rgba(244,239,230,0.3);
+        }
+      `}</style>
+
       <div style={{ width: '100%', maxWidth: '400px' }}>
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-          <div style={{ color: '#F4EFE6', fontSize: '24px', letterSpacing: '0.12em' }}>IEN</div>
-          <div style={{ color: 'rgba(244,239,230,0.35)', fontSize: '10px', letterSpacing: '0.16em', textTransform: 'uppercase', marginTop: '6px' }}>
+          <div style={{
+            color: '#F4EFE6',
+            fontSize: '28px',
+            letterSpacing: '0.14em',
+            fontFamily: 'var(--font-cormorant), Georgia, serif',
+          }}>IEN</div>
+          <div style={{
+            color: 'rgba(244,239,230,0.4)',
+            fontSize: '9px',
+            letterSpacing: '0.2em',
+            textTransform: 'uppercase',
+            marginTop: '6px',
+            fontFamily: 'var(--font-dm-sans), sans-serif',
+          }}>
             PROTOCOLO · 21 DÍAS
           </div>
         </div>
 
         {phase === 'form' ? (
           <div style={{
-            background: '#1C3D50',
+            background: 'rgba(28,61,80,0.5)',
             borderRadius: '12px',
             padding: '40px 32px',
+            border: '1px solid rgba(43,122,139,0.25)',
+            backdropFilter: 'blur(10px)',
           }}>
             <h1 style={{
               color: '#F4EFE6',
-              fontSize: '20px',
+              fontSize: '24px',
               margin: '0 0 8px',
               fontWeight: 400,
-              lineHeight: 1.4,
+              lineHeight: 1.3,
+              fontFamily: 'var(--font-cormorant), Georgia, serif',
             }}>
-              Portal del Programa
+              Acceso al Programa
             </h1>
             <p style={{
-              color: 'rgba(244,239,230,0.55)',
-              fontSize: '14px',
-              margin: '0 0 32px',
+              color: 'rgba(244,239,230,0.5)',
+              fontSize: '13px',
+              margin: '0 0 28px',
               lineHeight: 1.7,
+              fontFamily: 'var(--font-dm-sans), sans-serif',
             }}>
-              Introduce tu email y te enviaremos un enlace de acceso directo.
+              Introduce el email con el que compraste el programa.
             </p>
 
             {error && (
@@ -88,6 +126,7 @@ function LoginContent() {
                 color: '#F4A0A0',
                 fontSize: '13px',
                 lineHeight: 1.5,
+                fontFamily: 'var(--font-dm-sans), sans-serif',
               }}>
                 {error}
               </div>
@@ -95,69 +134,78 @@ function LoginContent() {
 
             <form onSubmit={handleSubmit}>
               <input
+                className="ien-input"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="tu@email.com"
                 required
-                style={{
-                  width: '100%',
-                  padding: '14px 16px',
-                  background: 'rgba(244,239,230,0.08)',
-                  border: '1px solid rgba(244,239,230,0.15)',
-                  borderRadius: '8px',
-                  color: '#F4EFE6',
-                  fontSize: '15px',
-                  marginBottom: '16px',
-                  boxSizing: 'border-box',
-                  outline: 'none',
-                  fontFamily: 'inherit',
-                }}
               />
               <button
                 type="submit"
                 disabled={loading || !email}
                 style={{
                   width: '100%',
-                  padding: '16px',
+                  padding: '14px',
                   background: loading ? 'rgba(184,114,46,0.5)' : '#B8722E',
                   color: '#F4EFE6',
                   border: 'none',
-                  borderRadius: '30px',
-                  fontSize: '15px',
+                  borderRadius: '6px',
+                  fontSize: '14px',
+                  fontWeight: 500,
                   cursor: loading ? 'not-allowed' : 'pointer',
+                  fontFamily: 'var(--font-dm-sans), sans-serif',
                   letterSpacing: '0.02em',
                 }}
               >
                 {loading ? 'Enviando...' : 'Enviar enlace de acceso →'}
               </button>
             </form>
+
+            <p style={{
+              fontSize: '10px',
+              color: 'rgba(244,239,230,0.3)',
+              textAlign: 'center',
+              margin: '16px 0 0',
+              fontFamily: 'var(--font-dm-sans), sans-serif',
+            }}>
+              Recibirás un enlace válido durante 30 minutos.
+            </p>
           </div>
         ) : (
           <div style={{
-            background: '#1C3D50',
+            background: 'rgba(28,61,80,0.5)',
             borderRadius: '12px',
-            padding: '40px 32px',
+            padding: '48px 32px',
             textAlign: 'center',
+            border: '1px solid rgba(43,122,139,0.25)',
+            backdropFilter: 'blur(10px)',
           }}>
-            <div style={{ fontSize: '32px', marginBottom: '20px' }}>✉</div>
+            {/* Envelope icon */}
+            <div style={{ marginBottom: '20px' }}>
+              <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="4" y="10" width="32" height="22" rx="2" stroke="#2B7A8B" strokeWidth="1.5" fill="none"/>
+                <path d="M4 12L20 22L36 12" stroke="#2B7A8B" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+            </div>
             <h2 style={{
               color: '#F4EFE6',
               fontSize: '20px',
               fontWeight: 400,
               margin: '0 0 12px',
+              fontFamily: 'var(--font-cormorant), Georgia, serif',
             }}>
-              Enlace enviado
+              Revisa tu email.
             </h2>
             <p style={{
               color: 'rgba(244,239,230,0.6)',
-              fontSize: '14px',
+              fontSize: '13px',
               lineHeight: 1.8,
               margin: 0,
+              fontFamily: 'var(--font-dm-sans), sans-serif',
             }}>
-              Si <strong style={{ color: '#F4EFE6' }}>{email}</strong> tiene acceso al programa,
-              recibirás el enlace en unos segundos.<br /><br />
-              El enlace es válido durante 30 minutos.
+              El enlace de acceso estará en tu bandeja<br />
+              en menos de 2 minutos.
             </p>
           </div>
         )}
