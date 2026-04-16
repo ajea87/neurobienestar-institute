@@ -81,6 +81,8 @@ export default function TestPage() {
   const [submitting, setSubmitting]         = useState(false)
   const [timerExpired, setTimerExpired]     = useState(false)
   const [animKey, setAnimKey]               = useState(0)
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
+  const [transitioning, setTransitioning]   = useState(false)
 
   // ── ViewContent al cargar ──
   useEffect(() => { events.viewContent() }, [])
@@ -93,15 +95,27 @@ export default function TestPage() {
 
   // ── Handlers ──
   function handleAnswer(value: number) {
+    if (selectedAnswer !== null) return // evitar doble tap
+    setSelectedAnswer(value)
+    setTransitioning(true)
     const next = [...answers, value]
     setAnswers(next)
     if (next.length === 5) {
       const total = next.reduce((a, b) => a + b, 0)
       setScore(total)
       events.lead()
-      setTimeout(() => setPhase('email'), 250)
+      setTimeout(() => {
+        setSelectedAnswer(null)
+        setTransitioning(false)
+        setPhase('email')
+      }, 300)
     } else {
-      setTimeout(() => { setCurrentQuestion(q => q + 1); setAnimKey(k => k + 1) }, 250)
+      setTimeout(() => {
+        setSelectedAnswer(null)
+        setTransitioning(false)
+        setCurrentQuestion(q => q + 1)
+        setAnimKey(k => k + 1)
+      }, 300)
     }
   }
 
@@ -113,6 +127,8 @@ export default function TestPage() {
     setEmail('')
     setEmailError('')
     setAnimKey(0)
+    setSelectedAnswer(null)
+    setTransitioning(false)
   }
 
   async function handleEmailSubmit() {
@@ -332,8 +348,8 @@ export default function TestPage() {
 
             {/* ── FASE TEST ── */}
             {phase === 'test' && (
-              <div key={animKey} className="modal-fade">
-                {/* Progreso */}
+              <div>
+                {/* Progreso — fuera del key para que anime suavemente */}
                 <div style={{ marginBottom: 24 }}>
                   <div style={{ height: 3, background: 'rgba(28,61,80,0.1)', borderRadius: 2, marginBottom: 6 }}>
                     <div style={{
@@ -341,7 +357,7 @@ export default function TestPage() {
                       width: `${(currentQuestion / 5) * 100}%`,
                       background: '#2B7A8B',
                       borderRadius: 2,
-                      transition: 'width 300ms ease',
+                      transition: 'width 400ms ease',
                     }} />
                   </div>
                   <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: '#8E9CA3', textAlign: 'right' }}>
@@ -349,40 +365,55 @@ export default function TestPage() {
                   </div>
                 </div>
 
-                {/* Pregunta */}
-                <h2 style={{
-                  fontFamily: "'Playfair Display', Georgia, serif",
-                  fontSize: 22,
-                  fontWeight: 400,
-                  color: '#1A1A1A',
-                  lineHeight: 1.3,
-                  marginBottom: 28,
-                }}>
-                  {preguntas[currentQuestion]}
-                </h2>
+                {/* Pregunta + opciones — key fuerza re-render con animación */}
+                <div
+                  key={currentQuestion}
+                  style={{
+                    opacity: transitioning ? 0 : 1,
+                    transform: transitioning ? 'translateX(10px)' : 'translateX(0)',
+                    transition: 'opacity 200ms ease, transform 200ms ease',
+                    animation: 'fadeIn 300ms ease',
+                  }}
+                >
+                  <h2 style={{
+                    fontFamily: "'Playfair Display', Georgia, serif",
+                    fontSize: 22,
+                    fontWeight: 400,
+                    color: '#1A1A1A',
+                    lineHeight: 1.3,
+                    marginBottom: 28,
+                  }}>
+                    {preguntas[currentQuestion]}
+                  </h2>
 
-                {/* Opciones */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  {opciones.map((op, i) => (
-                    <button
-                      key={i}
-                      className="opt-btn"
-                      onClick={() => handleAnswer(op.value)}
-                      style={{
-                        width: '100%',
-                        textAlign: 'left',
-                        padding: '14px 16px',
-                        border: '1.5px solid rgba(28,61,80,0.18)',
-                        borderRadius: 6,
-                        background: 'white',
-                        fontFamily: "'DM Sans', sans-serif",
-                        fontSize: 14,
-                        color: '#1A2326',
-                      }}
-                    >
-                      {op.label}
-                    </button>
-                  ))}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    {opciones.map((op, i) => (
+                      <button
+                        key={i}
+                        onClick={() => handleAnswer(op.value)}
+                        style={{
+                          width: '100%',
+                          textAlign: 'left',
+                          padding: '14px 16px',
+                          border: selectedAnswer === op.value
+                            ? '1.5px solid #1C3D50'
+                            : '1.5px solid rgba(28,61,80,0.18)',
+                          borderRadius: 6,
+                          background: selectedAnswer === op.value
+                            ? 'rgba(28,61,80,0.08)'
+                            : 'white',
+                          fontFamily: "'DM Sans', sans-serif",
+                          fontSize: 14,
+                          color: '#1A2326',
+                          cursor: selectedAnswer !== null ? 'default' : 'pointer',
+                          transform: selectedAnswer === op.value ? 'scale(0.99)' : 'scale(1)',
+                          transition: 'all 150ms ease',
+                        }}
+                      >
+                        {op.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             )}
