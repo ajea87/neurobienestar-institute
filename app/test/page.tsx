@@ -48,9 +48,24 @@ const EXPLICACION: Record<Level, string> = {
 }
 
 const REVEAL_TEXT: Record<Level, string> = {
-  verde: 'El IEN reserva este precio para quienes llegan antes de que el sistema se sature.',
-  amber: 'El IEN reserva este precio para quienes han decidido que es el momento de actuar.',
-  rojo:  'El IEN reserva este precio para quienes ya saben que esto no va a resolverse solo.',
+  verde: 'El IEN reserva este precio para quienes actúan antes de que el sistema se sature.',
+  amber: 'El IEN reserva este precio para quienes han decidido que el momento es hoy.',
+  rojo:  'Este precio existe porque tu sistema nervioso ya no puede esperar. El IEN lo reserva para quienes lo necesitan ahora.',
+}
+
+const BRIDGE: Record<Level, [string, string]> = {
+  rojo: [
+    'El Protocolo Nervio Vago del IEN contiene las 7 técnicas de micro-activación vagal ordenadas por urgencia de impacto. Cada una activa el nervio vago de forma directa — sin meditación, sin equipamiento, en menos de 3 minutos.',
+    'La primera produce un efecto perceptible en 60 segundos. Puedes aplicarla hoy. Ahora mismo.',
+  ],
+  amber: [
+    'El Protocolo Nervio Vago del IEN reúne las 7 técnicas más efectivas para salir de la activación crónica. Ordenadas por impacto. Con instrucciones exactas. Sin terminología médica, sin tiempo previo, sin equipamiento.',
+    'La primera técnica produce un cambio perceptible en menos de 60 segundos.',
+  ],
+  verde: [
+    'El Protocolo Nervio Vago del IEN te da las 7 técnicas para actuar ahora — antes de que el sistema se sature. Ordenadas de menor a mayor impacto. Cada una en menos de 3 minutos.',
+    'El momento correcto para empezar es exactamente este.',
+  ],
 }
 
 const CTA: Record<Level, string> = {
@@ -530,50 +545,139 @@ export default function TestPage() {
                   </p>
                 </div>
 
-                {/* Lo que recibe */}
-                <div style={{ borderTop: '0.5px solid #CCC', paddingTop: 14, marginBottom: 14 }}>
-                  <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#888', marginBottom: 10 }}>
-                    Lo que recibe
-                  </div>
-                  {[
-                    'Protocolo Nervio Vago · PDF descargable',
-                    '7 técnicas MAV ordenadas por impacto',
-                    'Instrucciones exactas de aplicación',
-                    'Acceso inmediato tras el pago',
-                  ].map((item, i) => (
-                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6, fontFamily: "'Source Serif 4', Georgia, serif", fontSize: 13, color: '#333' }}>
-                      <span style={{ color: '#2B7A8B', fontSize: 12, flexShrink: 0 }}>✓</span>
-                      {item}
-                    </div>
-                  ))}
+                {/* ── BLOQUE 1: EL PUENTE ── */}
+                <div style={{
+                  padding: '20px 0',
+                  borderTop: '1px solid rgba(28,61,80,0.1)',
+                  borderBottom: '1px solid rgba(28,61,80,0.1)',
+                  margin: '16px 0',
+                }}>
+                  <p style={{
+                    fontFamily: "'Source Serif 4', Georgia, serif",
+                    fontSize: 17,
+                    color: '#1A2326',
+                    lineHeight: 1.8,
+                    margin: '0 0 12px',
+                  }}>
+                    {BRIDGE[level][0]}
+                  </p>
+                  <p style={{
+                    fontFamily: "'Source Serif 4', Georgia, serif",
+                    fontSize: 17,
+                    color: '#1A2326',
+                    lineHeight: 1.8,
+                    margin: 0,
+                  }}>
+                    {BRIDGE[level][1]}
+                  </p>
                 </div>
 
-                {/* Caja precio */}
-                <div style={{ border: '1px solid #CCC', borderTop: '3px solid #B8722E', padding: 16, background: 'white' }}>
-                  <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#B8722E', marginBottom: 10 }}>
-                    Precio de acceso diagnóstico
+                {/* ── BLOQUE 2: LO QUE RECIBE ── */}
+                <div style={{
+                  background: 'rgba(43,122,139,0.06)',
+                  border: '1px solid rgba(43,122,139,0.2)',
+                  borderRadius: 8,
+                  padding: 20,
+                  margin: '0 0 16px',
+                }}>
+                  <div style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: 10,
+                    fontWeight: 500,
+                    textTransform: 'uppercase' as const,
+                    letterSpacing: '0.1em',
+                    color: '#2B7A8B',
+                    marginBottom: 14,
+                  }}>
+                    Lo que recibes ahora mismo
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 10 }}>
+                    {[
+                      { title: 'Las 7 técnicas MAV', desc: 'Ordenadas por impacto. La primera la puedes aplicar en 60 segundos.' },
+                      { title: 'Instrucciones exactas', desc: 'Sin interpretación. Sabes exactamente qué hacer, cuántos ciclos y cuándo.' },
+                      { title: 'PDF descargable', desc: 'Acceso inmediato. En tu email en menos de 2 minutos.' },
+                      { title: 'Garantía 30 días', desc: 'Si no notas diferencia, te devolvemos el dinero. Sin preguntas.' },
+                    ].map((item, i) => (
+                      <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                        <div style={{
+                          width: 20, height: 20,
+                          background: '#2B7A8B',
+                          borderRadius: '50%',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          flexShrink: 0, marginTop: 2,
+                        }}>
+                          <span style={{ color: '#F4EFE6', fontSize: 11 }}>✓</span>
+                        </div>
+                        <div>
+                          <div style={{
+                            fontFamily: "'DM Sans', sans-serif",
+                            fontSize: 14,
+                            fontWeight: 500,
+                            color: '#1C3D50',
+                            marginBottom: 2,
+                          }}>{item.title}</div>
+                          <div style={{
+                            fontFamily: 'Georgia, serif',
+                            fontSize: 13,
+                            color: '#5F5E5A',
+                            lineHeight: 1.55,
+                          }}>{item.desc}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* ── BLOQUE 3: PRECIO ── */}
+                <div style={{
+                  background: '#1C3D50',
+                  borderRadius: 10,
+                  padding: '24px 20px',
+                  margin: '0 0 12px',
+                }}>
+                  <div style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: 10,
+                    fontWeight: 500,
+                    textTransform: 'uppercase' as const,
+                    letterSpacing: '0.12em',
+                    color: '#9FE1CB',
+                    marginBottom: 12,
+                  }}>
+                    PRECIO DE ACCESO DIAGNÓSTICO
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 6 }}>
-                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: '#999', textDecoration: 'line-through' }}>
-                      Precio habitual: 19€
-                    </span>
-                    <span style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 42, color: '#1A1A1A', lineHeight: 1 }}>
-                      7€
-                    </span>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 8 }}>
+                    <span style={{ fontFamily: 'Georgia, serif', fontSize: 16, color: 'rgba(244,239,230,0.4)', textDecoration: 'line-through' }}>19€</span>
+                    <span style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 52, color: '#F4EFE6', lineHeight: 1, fontWeight: 400 }}>7€</span>
                   </div>
 
-                  <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: '#888', margin: '0 0 14px' }}>
-                    Pago único · Acceso inmediato · PDF descargable
+                  <p style={{
+                    fontFamily: 'Georgia, serif',
+                    fontSize: 13,
+                    color: 'rgba(244,239,230,0.65)',
+                    lineHeight: 1.65,
+                    margin: '0 0 16px',
+                    fontStyle: 'italic',
+                  }}>
+                    {REVEAL_TEXT[level]}
                   </p>
 
                   {/* Timer */}
-                  <CountdownTimer onExpire={() => setTimerExpired(true)} />
-
-                  {/* Reveal text */}
-                  <p style={{ fontFamily: "'Source Serif 4', Georgia, serif", fontSize: 13, color: '#555', lineHeight: 1.6, marginBottom: 14, fontStyle: 'italic' }}>
-                    {REVEAL_TEXT[level]}
-                  </p>
+                  <div style={{
+                    background: 'rgba(244,239,230,0.08)',
+                    borderRadius: 6,
+                    padding: '10px 14px',
+                    marginBottom: 16,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: 'rgba(244,239,230,0.6)' }}>
+                      Precio disponible durante
+                    </span>
+                    <CountdownTimer onExpire={() => setTimerExpired(true)} />
+                  </div>
 
                   {/* Botón o expirado */}
                   {!timerExpired ? (
@@ -582,46 +686,69 @@ export default function TestPage() {
                       style={{
                         width: '100%',
                         background: '#B8722E',
-                        color: 'white',
+                        color: '#F4EFE6',
                         border: 'none',
-                        borderRadius: 4,
-                        padding: 16,
+                        borderRadius: 6,
+                        padding: 18,
                         fontFamily: "'DM Sans', sans-serif",
-                        fontSize: 15,
+                        fontSize: 17,
                         fontWeight: 500,
+                        cursor: 'pointer',
+                        letterSpacing: '0.02em',
+                      }}
+                    >
+                      {level === 'verde' && 'Acceder al Protocolo · 7€ →'}
+                      {level === 'amber' && 'Activar mi nervio vago · 7€ →'}
+                      {level === 'rojo'  && 'Empezar hoy · 7€ →'}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleStartTest}
+                      style={{
+                        width: '100%',
+                        background: 'transparent',
+                        border: '1px solid rgba(244,239,230,0.3)',
+                        borderRadius: 6,
+                        padding: 14,
+                        color: 'rgba(244,239,230,0.6)',
+                        fontFamily: "'DM Sans', sans-serif",
+                        fontSize: 13,
                         cursor: 'pointer',
                       }}
                     >
-                      {CTA[level]}
+                      Repetir el test para desbloquear el precio →
                     </button>
-                  ) : (
-                    <div style={{ textAlign: 'center' }}>
-                      <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: '#888', fontStyle: 'italic', marginBottom: 12 }}>
-                        El precio de acceso ha expirado.
-                      </p>
-                      <button
-                        onClick={handleStartTest}
-                        style={{
-                          background: 'none',
-                          border: '1.5px solid #1C3D50',
-                          borderRadius: 4,
-                          padding: '12px 24px',
-                          fontFamily: "'DM Sans', sans-serif",
-                          fontSize: 13,
-                          color: '#1C3D50',
-                          cursor: 'pointer',
-                          width: '100%',
-                        }}
-                      >
-                        Repetir el test para desbloquear el precio →
-                      </button>
-                    </div>
                   )}
 
-                  <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: '#999', textAlign: 'center', marginTop: 10 }}>
-                    Garantía de devolución 30 días sin preguntas
+                  <p style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: 11,
+                    color: 'rgba(244,239,230,0.4)',
+                    textAlign: 'center',
+                    margin: '12px 0 0',
+                  }}>
+                    Garantía de devolución 30 días · Sin preguntas
                   </p>
                 </div>
+
+                {/* ── BLOQUE 4: PRUEBA SOCIAL ── */}
+                <div style={{
+                  borderTop: '1px solid rgba(28,61,80,0.1)',
+                  paddingTop: 16,
+                  textAlign: 'center',
+                }}>
+                  <p style={{
+                    fontFamily: 'Georgia, serif',
+                    fontSize: 12,
+                    color: '#8E9CA3',
+                    lineHeight: 1.6,
+                    margin: 0,
+                  }}>
+                    Más de 200 personas han completado este test.<br />
+                    El 68% salió en nivel rojo o ámbar.
+                  </p>
+                </div>
+
               </div>
             )}
           </div>
