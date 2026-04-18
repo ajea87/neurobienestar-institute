@@ -38,35 +38,50 @@ const PILL: Record<Level, { label: string; bg: string; color: string }> = {
 }
 
 const TITULO: Record<Level, string> = {
-  verde: 'Su sistema nervioso todavía tiene margen.',
-  amber: 'Su nervio vago lleva tiempo pidiendo atención.',
-  rojo:  'Su cuerpo lleva demasiado tiempo en alerta.',
+  verde: 'Tu nervio vago todavía sabe avisar. Esa es tu ventaja.',
+  amber: 'Tu cuerpo lleva meses pidiendo salir de aquí.',
+  rojo:  'Tu sistema nervioso lleva demasiado tiempo en supervivencia.',
 }
 
-const EXPLICACION: Record<Level, string> = {
-  verde: 'Su nervio vago ya envía señales de desequilibrio. El momento correcto para actuar es ahora, antes de que el sistema se sature.',
-  amber: 'Sus respuestas indican nervio vago inhibido en activación crónica. El cuerpo lleva tiempo en modo alerta sin poder salir solo.',
-  rojo:  'Un sistema nervioso en modo supervivencia sostenido no se regula solo. El nervio vago necesita estimulación directa y precisa para recalibrar.',
+const EXPLICACION: Record<Level, string[]> = {
+  verde: [
+    'Tus 5 respuestas dibujan un patrón claro: señales tempranas de inhibición vagal.',
+    'No estás en activación crónica todavía. Pero tu sistema nervioso ya empieza a quedarse encendido más tiempo del que debería después del estrés cotidiano.',
+    'Las señales que has identificado — el cansancio ocasional, la digestión que reacciona, la mente que no se apaga — son el primer aviso. El cuerpo te está diciendo dónde mirar antes de que el patrón se consolide.',
+  ],
+  amber: [
+    'Tus 5 respuestas dibujan un patrón claro: nervio vago inhibido en activación crónica.',
+    'Significa que tu cuerpo lleva meses — quizás años — en modo alerta sin saber cómo bajar. No es estrés puntual. Es un sistema que se quedó encendido y olvidó cómo apagarse.',
+    'El cansancio al despertar, la digestión que reacciona a la tensión, los hombros que no sueltan. No son problemas separados. Son la misma señal repitiéndose de formas distintas.',
+  ],
+  rojo: [
+    'Tus 5 respuestas dibujan un patrón claro: nervio vago profundamente inhibido. Sistema nervioso autónomo en modo supervivencia sostenido.',
+    'No es estrés. No es ansiedad. Es un cuerpo que lleva años operando con el freno parasimpático bloqueado, y que ya no sabe volver al estado de calma por sí mismo.',
+    'El cansancio que el sueño no repara, la digestión que se descontrola, la mente que no se detiene, la sensación de estar presente sin estar aquí. No son síntomas distintos. Son el mismo sistema pidiendo recalibración.',
+  ],
 }
 
 const REVEAL_TEXT: Record<Level, string> = {
-  verde: 'El IEN reserva este precio para quienes actúan antes de que el sistema se sature.',
-  amber: 'El IEN reserva este precio para quienes han decidido que el momento es hoy.',
-  rojo:  'Este precio existe porque tu sistema nervioso ya no puede esperar. El IEN lo reserva para quienes lo necesitan ahora.',
+  verde: 'Señales tempranas detectadas hoy. El IEN reserva este precio para quienes intervienen antes de que el patrón se consolide. Actuar ahora cuesta menos esfuerzo que recuperarse después.',
+  amber: 'Activación crónica detectada hoy. El IEN reserva este precio para quienes deciden intervenir antes de que el sistema escale a modo supervivencia permanente.',
+  rojo:  'Modo supervivencia detectado hoy. El IEN reserva este precio para quienes ya saben que esto no se resuelve solo y han decidido dar al cuerpo la herramienta que estaba pidiendo.',
 }
 
-const BRIDGE: Record<Level, [string, string]> = {
-  rojo: [
-    'El Protocolo Nervio Vago del IEN contiene las 7 técnicas de micro-activación vagal ordenadas por urgencia de impacto. Cada una activa el nervio vago de forma directa — sin meditación, sin equipamiento, en menos de 3 minutos.',
-    'La primera produce un efecto perceptible en 60 segundos. Puedes aplicarla hoy. Ahora mismo.',
+const INACTION: Record<Level, string[]> = {
+  verde: [
+    'El patrón de inhibición vagal que tienes hoy no desaparece solo.',
+    'Sin intervención, en 6–12 meses la mayoría de personas en nivel verde escalan a activación crónica.',
+    'No es alarmismo. Es la biología del sistema nervioso autónomo: los patrones se consolidan si no se interrumpen.',
   ],
   amber: [
-    'El Protocolo Nervio Vago del IEN reúne las 7 técnicas más efectivas para salir de la activación crónica. Ordenadas por impacto. Con instrucciones exactas. Sin terminología médica, sin tiempo previo, sin equipamiento.',
-    'La primera técnica produce un cambio perceptible en menos de 60 segundos.',
+    'Con el nivel ámbar, esperar no es neutral.',
+    'El sistema nervioso en activación crónica no vuelve solo al equilibrio. Se adapta al estado de alerta y lo normaliza.',
+    'Cada mes que pasa, el umbral de lo que considera "normal" se desplaza. El cuerpo aprende que el estrés es el estado base.',
   ],
-  verde: [
-    'El Protocolo Nervio Vago del IEN te da las 7 técnicas para actuar ahora — antes de que el sistema se sature. Ordenadas de menor a mayor impacto. Cada una en menos de 3 minutos.',
-    'El momento correcto para empezar es exactamente este.',
+  rojo: [
+    'El modo supervivencia sostenido tiene un coste que no siempre se ve: se gasta energía extra 24 horas al día.',
+    'Con el tiempo, el sistema inmunitario lo paga. La digestión lo paga. El sueño lo paga. La capacidad de concentración lo paga.',
+    'No hay nada que esperar. Tu sistema nervioso ya está pagando el precio ahora.',
   ],
 }
 
@@ -545,11 +560,13 @@ export default function TestPage() {
                 {/* Explicación */}
                 <div style={{ background: '#F0F4F8', borderLeft: '3px solid #1C3D50', padding: '14px 16px', marginBottom: 14 }}>
                   <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#1C3D50', marginBottom: 8 }}>
-                    Qué significa este resultado
+                    QUÉ ESTÁ PASANDO EN TU SISTEMA NERVIOSO
                   </div>
-                  <p style={{ fontFamily: "'Source Serif 4', Georgia, serif", fontSize: 14, color: '#333', lineHeight: 1.7, margin: 0 }}>
-                    {EXPLICACION[level]}
-                  </p>
+                  {EXPLICACION[level].map((para, i) => (
+                    <p key={i} style={{ fontFamily: "'Source Serif 4', Georgia, serif", fontSize: 14, color: '#333', lineHeight: 1.7, margin: i < EXPLICACION[level].length - 1 ? '0 0 10px' : 0 }}>
+                      {para}
+                    </p>
+                  ))}
                 </div>
 
                 {/* ── BLOQUE 1: EL PUENTE ── */}
@@ -559,23 +576,29 @@ export default function TestPage() {
                   borderBottom: '1px solid rgba(28,61,80,0.1)',
                   margin: '16px 0',
                 }}>
-                  <p style={{
-                    fontFamily: "'Source Serif 4', Georgia, serif",
-                    fontSize: 17,
-                    color: '#1A2326',
-                    lineHeight: 1.8,
-                    margin: '0 0 12px',
+                  <h3 style={{
+                    fontFamily: "'Playfair Display', Georgia, serif",
+                    fontSize: 18,
+                    fontWeight: 700,
+                    color: '#1A1A1A',
+                    lineHeight: 1.3,
+                    marginBottom: 16,
+                    textTransform: 'uppercase' as const,
+                    letterSpacing: '0.02em',
                   }}>
-                    {BRIDGE[level][0]}
-                  </p>
+                    HAY UNA FORMA DE BAJAR ESE SISTEMA. Y NO REQUIERE LO QUE CREES.
+                  </h3>
                   <p style={{
                     fontFamily: "'Source Serif 4', Georgia, serif",
-                    fontSize: 17,
+                    fontSize: 15,
                     color: '#1A2326',
                     lineHeight: 1.8,
                     margin: 0,
                   }}>
-                    {BRIDGE[level][1]}
+                    No requiere meditación.<br />
+                    No requiere tiempo libre.<br />
+                    No requiere nada que no puedas hacer ahora mismo.<br /><br />
+                    El Protocolo Nervio Vago del IEN contiene las 7 técnicas de micro-activación vagal con instrucciones exactas: qué hacer, cuántos ciclos, en qué momento. La primera produce un efecto perceptible en menos de 60 segundos.
                   </p>
                 </div>
 
@@ -596,14 +619,14 @@ export default function TestPage() {
                     color: '#2B7A8B',
                     marginBottom: 14,
                   }}>
-                    Lo que recibes ahora mismo
+                    LO QUE RECIBES EN TU EMAIL EN MENOS DE 2 MINUTOS
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 10 }}>
                     {[
-                      { title: 'Las 7 técnicas MAV', desc: 'Ordenadas por impacto. La primera la puedes aplicar en 60 segundos.' },
-                      { title: 'Instrucciones exactas', desc: 'Sin interpretación. Sabes exactamente qué hacer, cuántos ciclos y cuándo.' },
-                      { title: 'PDF descargable', desc: 'Acceso inmediato. En tu email en menos de 2 minutos.' },
-                      { title: 'Garantía 30 días', desc: 'Si no notas diferencia, te devolvemos el dinero. Sin preguntas.' },
+                      { title: '7 técnicas MAV ordenadas por urgencia', desc: 'La primera activa el nervio vago en 60 segundos. Sin meditación, sin equipamiento.' },
+                      { title: 'Instrucciones exactas para cada técnica', desc: 'Cuántos ciclos. En qué posición. Cuándo hacerlo. Sin margen de error.' },
+                      { title: 'El mapa completo de tu sistema nervioso', desc: 'Por qué estás aquí. Qué lo mantiene. Por qué el nervio vago es la palanca.' },
+                      { title: 'Garantía real de 30 días', desc: 'Si en 30 días no notas cambio, te devuelvo el dinero. Sin formularios, sin preguntas.' },
                     ].map((item, i) => (
                       <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
                         <div style={{
@@ -631,6 +654,42 @@ export default function TestPage() {
                           }}>{item.desc}</div>
                         </div>
                       </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* ── BLOQUE F: QUÉ NO CAMBIA SI NO HACES NADA ── */}
+                <div style={{
+                  background: 'rgba(180,40,40,0.05)',
+                  border: '1px solid rgba(180,40,40,0.15)',
+                  borderRadius: 8,
+                  padding: '16px 20px',
+                  margin: '0 0 16px',
+                }}>
+                  <div style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: 10,
+                    fontWeight: 500,
+                    textTransform: 'uppercase' as const,
+                    letterSpacing: '0.1em',
+                    color: '#9B1C1C',
+                    marginBottom: 12,
+                  }}>
+                    {level === 'verde' && 'LO QUE CAMBIA SI NO ACTÚAS AHORA'}
+                    {level === 'amber' && 'LO QUE EMPEORA SI NO HACES NADA'}
+                    {level === 'rojo'  && 'LO QUE PASA SI SIGUES ESPERANDO'}
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 8 }}>
+                    {INACTION[level].map((line, i) => (
+                      <p key={i} style={{
+                        fontFamily: "'Source Serif 4', Georgia, serif",
+                        fontSize: 13,
+                        color: '#4A2020',
+                        lineHeight: 1.65,
+                        margin: 0,
+                      }}>
+                        {line}
+                      </p>
                     ))}
                   </div>
                 </div>
@@ -675,7 +734,7 @@ export default function TestPage() {
                     background: 'rgba(244,239,230,0.08)',
                     borderRadius: 6,
                     padding: '10px 14px',
-                    marginBottom: 16,
+                    marginBottom: 8,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
@@ -685,6 +744,15 @@ export default function TestPage() {
                     </span>
                     <CountdownTimer onExpire={() => setTimerExpired(true)} />
                   </div>
+                  <p style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: 11,
+                    color: 'rgba(244,239,230,0.55)',
+                    textAlign: 'center',
+                    margin: '0 0 16px',
+                  }}>
+                    Cuando el contador llegue a cero, el acceso vuelve a 19€.
+                  </p>
 
                   {/* Botón o expirado */}
                   {!timerExpired ? (
@@ -704,9 +772,9 @@ export default function TestPage() {
                         letterSpacing: '0.02em',
                       }}
                     >
-                      {level === 'verde' && 'Acceder al Protocolo · 7€ →'}
-                      {level === 'amber' && 'Activar mi nervio vago · 7€ →'}
-                      {level === 'rojo'  && 'Empezar hoy · 7€ →'}
+                      {level === 'verde' && 'Quiero proteger mi sistema →'}
+                      {level === 'amber' && 'Quiero salir de la activación crónica →'}
+                      {level === 'rojo'  && 'Necesito recalibrar mi sistema →'}
                     </button>
                   ) : (
                     <button
@@ -730,11 +798,11 @@ export default function TestPage() {
                   <p style={{
                     fontFamily: "'DM Sans', sans-serif",
                     fontSize: 11,
-                    color: 'rgba(244,239,230,0.4)',
+                    color: 'rgba(244,239,230,0.65)',
                     textAlign: 'center',
                     margin: '12px 0 0',
                   }}>
-                    Garantía de devolución 30 días · Sin preguntas
+                    Pago seguro · Acceso inmediato · 30 días de garantía
                   </p>
                 </div>
 
