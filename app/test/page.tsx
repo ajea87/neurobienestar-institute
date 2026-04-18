@@ -68,11 +68,6 @@ const BRIDGE: Record<Level, [string, string]> = {
   ],
 }
 
-const CTA: Record<Level, string> = {
-  verde: 'Acceder al Protocolo →',
-  amber: 'Activar mi nervio vago →',
-  rojo:  'Empezar hoy →',
-}
 
 // ─── COMPONENTE PRINCIPAL ─────────────────────────────────────────────────────
 
