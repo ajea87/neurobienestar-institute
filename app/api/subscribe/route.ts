@@ -23,12 +23,20 @@ export async function POST(req: Request) {
       );
     }
 
-    // Comprobar si el lead ya existe
-    const { data: existing } = await supabase
+    // Comprobar si el lead ya existe (.maybeSingle devuelve null sin error si no hay filas)
+    const { data: existing, error: lookupError } = await supabase
       .from("leads")
       .select("id, email_sequence, paid")
       .eq("email", email)
-      .single();
+      .maybeSingle();
+
+    if (lookupError) {
+      console.error("Supabase lookup error:", lookupError);
+      return Response.json(
+        { success: false, error: "Error al consultar" },
+        { status: 500 }
+      );
+    }
 
     if (existing) {
       // Actualizar sin tocar email_sequence ni paid
