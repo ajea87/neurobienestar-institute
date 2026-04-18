@@ -23,12 +23,15 @@ export async function POST(req: Request) {
       );
     }
 
-    // Comprobar si el lead ya existe (.maybeSingle devuelve null sin error si no hay filas)
-    const { data: existing, error: lookupError } = await supabase
+    // Lookup defensivo: tolera 0, 1 o N filas — trabaja con la más antigua
+    const { data: existingRows, error: lookupError } = await supabase
       .from("leads")
       .select("id, email_sequence, paid")
       .eq("email", email)
-      .maybeSingle();
+      .order("created_at", { ascending: true })
+      .limit(1);
+
+    const existing = existingRows && existingRows.length > 0 ? existingRows[0] : null;
 
     if (lookupError) {
       console.error("Supabase lookup error:", lookupError);
