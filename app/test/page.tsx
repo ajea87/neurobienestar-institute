@@ -21,6 +21,8 @@ const opciones = [
   { label: 'Casi siempre',   value: 4 },
 ]
 
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+
 type Level = 'verde' | 'amber' | 'rojo'
 
 function calcLevel(s: number): Level {
@@ -154,21 +156,32 @@ export default function TestPage() {
   }
 
   async function handleEmailSubmit() {
-    if (!email || !email.includes('@')) { setEmailError('Introduzca un email válido'); return }
+    const normalizedEmail = email.trim().toLowerCase()
+    if (!EMAIL_REGEX.test(normalizedEmail)) {
+      setEmailError('Necesitamos un email válido para enviarte el informe.')
+      return
+    }
     setEmailError('')
     setSubmitting(true)
     const lvl = calcLevel(score)
     setLevel(lvl)
     try {
-      await fetch('/api/subscribe', {
+      const res = await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, score, level: lvl }),
+        body: JSON.stringify({ email: normalizedEmail, score, level: lvl }),
       })
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`)
+      }
       events.completeRegistration(lvl)
-    } catch {}
-    setPhase('result')
-    setSubmitting(false)
+      setPhase('result')
+    } catch (err) {
+      console.error('[IEN subscribe error]', err)
+      setEmailError('No hemos podido procesar tu email. Inténtalo de nuevo en unos segundos.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   function handlePayment() {
@@ -444,13 +457,13 @@ export default function TestPage() {
             {phase === 'email' && (
               <div className="modal-fade">
                 <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: '#2B7A8B', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 16 }}>
-                  Test completado
+                  Diagnóstico generado
                 </div>
                 <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 24, fontWeight: 400, color: '#1A1A1A', lineHeight: 1.2, marginBottom: 12 }}>
-                  Su diagnóstico está listo.
+                  Tu diagnóstico está listo.
                 </h2>
                 <p style={{ fontFamily: "'Source Serif 4', Georgia, serif", fontSize: 15, color: '#555', lineHeight: 1.65, marginBottom: 24 }}>
-                  Introduzca su email para ver el resultado de su diagnóstico.
+                  Hemos analizado tus 5 respuestas y calculado tu nivel de inhibición vagal. ¿A qué email te enviamos el informe completo junto con la primera técnica?
                 </p>
 
                 <input
@@ -458,7 +471,7 @@ export default function TestPage() {
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && handleEmailSubmit()}
-                  placeholder="su@email.com"
+                  placeholder="tu@email.com"
                   style={{
                     width: '100%',
                     border: emailError ? '1.5px solid #dc2626' : '1.5px solid rgba(28,61,80,0.2)',
@@ -496,11 +509,11 @@ export default function TestPage() {
                     cursor: submitting ? 'not-allowed' : 'pointer',
                   }}
                 >
-                  {submitting ? 'Un momento...' : 'Ver mi diagnóstico →'}
+                  {submitting ? 'Preparando tu informe...' : 'Recibir mi diagnóstico →'}
                 </button>
 
                 <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: '#999', textAlign: 'center', marginTop: 10 }}>
-                  Sin spam. Puede darse de baja en cualquier momento.
+                  Solo te escribirá el equipo del IEN. Tu email no se comparte.
                 </p>
               </div>
             )}

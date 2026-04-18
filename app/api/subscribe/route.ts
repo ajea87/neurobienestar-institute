@@ -6,38 +6,71 @@ const supabase = createClient(
   process.env.SUPABASE_ANON_KEY!
 );
 
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
 export async function POST(req: Request) {
   try {
-    const { email, score, level } = await req.json();
+    const body = await req.json();
+    const email = typeof body.email === "string"
+      ? body.email.trim().toLowerCase()
+      : "";
+    const { score, level } = body;
 
-    // Validar email
-    if (!email || !email.includes("@")) {
+    if (!EMAIL_REGEX.test(email)) {
       return Response.json(
-        { success: false, error: "Email inválido" },
+        { success: false, error: "invalid_email" },
         { status: 400 }
       );
     }
 
-    // Guardar en Supabase
-    const { error } = await supabase
+    // Comprobar si el lead ya existe
+    const { data: existing } = await supabase
       .from("leads")
-      .insert([{
-        email,
-        score,
-        level,
-        paid: false,
-        email_sequence: 0,
-        first_email_at: new Date().toISOString()
-      }]);
+      .select("id, email_sequence, paid")
+      .eq("email", email)
+      .single();
 
-    if (error) {
-      console.error("Supabase error:", error);
-      return Response.json(
-        { success: false, error: "Error al guardar" },
-        { status: 500 }
-      );
+    if (existing) {
+      // Actualizar sin tocar email_sequence ni paid
+      const { error: updateError } = await supabase
+        .from("leads")
+        .update({
+          score,
+          level,
+          first_email_at: new Date().toISOString(),
+        })
+        .eq("email", email);
+
+      if (updateError) {
+        console.error("Supabase update error:", updateError);
+        return Response.json(
+          { success: false, error: "Error al actualizar" },
+          { status: 500 }
+        );
+      }
+    } else {
+      // Lead nuevo: insert completo
+      const { error: insertError } = await supabase
+        .from("leads")
+        .insert([{
+          email,
+          score,
+          level,
+          paid: false,
+          email_sequence: 0,
+          first_email_at: new Date().toISOString(),
+        }]);
+
+      if (insertError) {
+        console.error("Supabase insert error:", insertError);
+        return Response.json(
+          { success: false, error: "Error al guardar" },
+          { status: 500 }
+        );
+      }
     }
 
+    // Enviar email de resultado siempre (lead nuevo o repetidor)
     try {
       await sendResultEmail(email, level);
     } catch (emailErr) {
