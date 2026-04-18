@@ -114,7 +114,6 @@ export default function TestPage() {
     if (next.length === 5) {
       const total = next.reduce((a, b) => a + b, 0)
       setScore(total)
-      events.lead()
       setTimeout(() => {
         setSelectedAnswer(null)
         setTransitioning(false)
@@ -174,7 +173,7 @@ export default function TestPage() {
       if (!res.ok) {
         throw new Error(`HTTP ${res.status}`)
       }
-      events.completeRegistration(lvl)
+      events.lead()
       setPhase('result')
     } catch (err) {
       console.error('[IEN subscribe error]', err)
