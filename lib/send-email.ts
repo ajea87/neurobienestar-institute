@@ -101,6 +101,74 @@ Si hay un momento para hacer esto, es ahora. Antes de que el nivel rojo sea el �
   },
 }
 
+// ─── Follow-up email 2: técnica gratis ───────────────────────────────────────
+
+const FOLLOWUP_CONTENT: Record<string, { subject: string; intro: string; cta: string }> = {
+  verde: {
+    subject: 'Una técnica para ahora mismo',
+    intro: 'Hace unas horas hiciste el test. Tu nivel verde significa que tu sistema nervioso todavía tiene margen — y ese margen se aprovecha mejor cuanto antes.',
+    cta: 'Quiero el Protocolo ahora →',
+  },
+  amber: {
+    subject: 'Una técnica para ahora mismo',
+    intro: 'Hace unas horas hiciste el test. Tu nivel ámbar significa que llevas tiempo en activación crónica. Antes de que decidas si el Protocolo es para ti, quiero que pruebes algo.',
+    cta: 'Activar mi nervio vago →',
+  },
+  rojo: {
+    subject: 'Una técnica para ahora mismo',
+    intro: 'Hace unas horas hiciste el test. Tu nivel rojo significa que tu sistema nervioso lleva tiempo en modo supervivencia. Antes de que decidas si el Protocolo es para ti, quiero que pruebes algo ahora mismo.',
+    cta: 'Empezar hoy →',
+  },
+}
+
+export function followUpEmailPreview(level: string): { subject: string; bodyPreview: string } {
+  const c = FOLLOWUP_CONTENT[level] ?? FOLLOWUP_CONTENT.rojo
+  return { subject: c.subject, bodyPreview: c.intro.substring(0, 150) }
+}
+
+export async function sendFollowUpTechniqueEmail(email: string, level: string): Promise<void> {
+  const c = FOLLOWUP_CONTENT[level] ?? FOLLOWUP_CONTENT.rojo
+  const body = `
+    ${c.intro}
+    <br><br>
+    <div style="background:#F4EFE6;border-left:3px solid #2B7A8B;
+                border-radius:0 8px 8px 0;padding:20px 24px;margin:8px 0 20px">
+      <p style="font-size:14px;font-weight:500;color:#1C3D50;
+                margin:0 0 12px;font-family:Arial,sans-serif">
+        Técnica 1 · La Espiración Larga · 30 segundos
+      </p>
+      <p style="font-size:14px;color:#5F5E5A;line-height:1.8;
+                margin:0;font-family:Arial,sans-serif">
+        Inspira por la nariz contando 4 tiempos.<br>
+        Espira por la boca contando 8 tiempos —<br>
+        como si soplases sobre una vela sin apagarla.<br>
+        Repite 5 veces.<br><br>
+        <strong style="color:#1C3D50">
+          Si en el ciclo 3 notas que los hombros caen solos — eso es el nervio vago respondiendo.
+        </strong>
+      </p>
+    </div>
+    <br>
+    Las otras 6 técnicas están en el Protocolo.
+    Acceso inmediato por 7€.
+  `
+  const { error } = await resend.emails.send({
+    from: 'IEN · Instituto Español de Neurobienestar <protocolo@neurobienestar.institute>',
+    to: email,
+    subject: c.subject,
+    html: emailTemplate({
+      title: 'Una técnica para ahora mismo.',
+      body,
+      ctaText: c.cta,
+      ctaUrl: process.env.NEXT_PUBLIC_STRIPE_LINK!,
+      footerNote: 'Acceso inmediato · PDF descargable · 7€ pago único',
+    }),
+  })
+  if (error) throw new Error(`Resend error: ${error.message}`)
+}
+
+// ─── Result email ─────────────────────────────────────────────────────────────
+
 export async function sendResultEmail(email: string, level: string): Promise<void> {
   if (level === 'directo' || !(level in RESULT_CONTENT)) return
 
