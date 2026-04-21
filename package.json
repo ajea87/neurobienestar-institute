@@ -9,7 +9,9 @@
     "lint": "next lint",
     "followup:dry": "node --env-file=.env.local --import=tsx/esm scripts/send-manual-followup.ts --dry-run",
     "followup:run": "node --env-file=.env.local --import=tsx/esm scripts/send-manual-followup.ts --confirm",
-    "qa:email3": "tsx scripts/qa-email3.ts"
+    "qa:email3": "tsx scripts/qa-followup.ts --email=3",
+    "qa:email4": "tsx scripts/qa-followup.ts --email=4",
+    "qa:email5": "tsx scripts/qa-followup.ts --email=5"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.103.0",

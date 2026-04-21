@@ -229,6 +229,86 @@ export async function sendFollowUpUrgencyEmail(email: string, level: string): Pr
   if (error) throw new Error(`Resend error: ${error.message}`)
 }
 
+// ─── Follow-up email 4: reencuadre escepticismo ──────────────────────────────
+
+const EMAIL4_CONTENT: Record<string, { symptomPhrase: string; levelExplanation: string }> = {
+  rojo: {
+    symptomPhrase: 'cansancio crónico, mente que no para, sistema nervioso siempre en alerta',
+    levelExplanation: 'Las técnicas mentales (meditar, respirar consciente, gestionar pensamientos) operan sobre la corteza cerebral. Pero el patrón de modo supervivencia que tienes está instalado en el sistema nervioso autónomo, varios pisos por debajo de donde puede llegar la voluntad consciente. Por eso no funciona pensar mejor — porque el problema no está en cómo piensas.',
+  },
+  amber: {
+    symptomPhrase: 'tensión sostenida, digestión alterada, sueño que no repara',
+    levelExplanation: 'Las técnicas mentales (meditar, respirar consciente, gestionar el estrés) operan sobre la corteza cerebral. Pero la activación crónica que tienes está instalada en el sistema nervioso autónomo, en una capa más profunda que la consciencia. Por eso te alivia momentáneamente pero vuelves al mismo estado — porque la intervención no está llegando al lugar correcto.',
+  },
+  verde: {
+    symptomPhrase: 'señales tempranas que aparecen y desaparecen sin patrón claro',
+    levelExplanation: 'Las técnicas mentales (meditar, respirar consciente, mindfulness) operan sobre la corteza cerebral. Eso te da herramientas para gestionar el momento, pero no consolida un cambio de tono en el sistema nervioso autónomo. Por eso las señales vuelven — porque el sistema no está recalibrado, solo está siendo gestionado intermitentemente.',
+  },
+}
+
+function buildEmail4Body(level: string): string {
+  const c = EMAIL4_CONTENT[level] ?? EMAIL4_CONTENT.rojo
+  return `
+    ${P(`Si llevas años con ${c.symptomPhrase}, probablemente ya has intentado varias cosas. Meditación. Suplementos. Cambios de hábitos. Quizás terapia. Y aquí sigues — con la misma sensación de que el cuerpo no termina de recalibrar.`)}
+    ${P('Eso no es falta de disciplina por tu parte. Es que la mayoría de soluciones que se ofrecen para esto trabajan en la capa equivocada.')}
+    ${P(c.levelExplanation)}
+    ${P('El Método MAV no compite con la meditación, ni con el mindfulness, ni con los hábitos. Trabaja una capa por debajo: la activación fisiológica directa del nervio vago a través de sus vías de acceso anatómicas — respiratoria, laríngea, visual, trigémino-vagal, cervical, faríngea.')}
+    ${P('No es psicológico. Es mecánico. Por eso produce un cambio medible en frecuencia cardíaca desde la primera aplicación, sin necesidad de que creas en nada.')}
+    ${P('Esa es la diferencia entre algo que requiere fe (meditación, cambio de mentalidad, pensamiento positivo) y algo que se demuestra solo (un estímulo físico que activa un nervio físico y produce una respuesta física verificable).')}
+    ${P('Si quieres revisar exactamente qué incluye:<br><a href="https://www.neurobienestar.institute/protocolo" style="color:#2B7A8B;text-decoration:underline;font-family:Arial,sans-serif">https://www.neurobienestar.institute/protocolo</a>')}
+  `
+}
+
+export async function sendFollowUpReframeEmail(email: string, level: string): Promise<void> {
+  const { error } = await resend.emails.send({
+    from: 'IEN · Instituto Español de Neurobienestar <protocolo@neurobienestar.institute>',
+    to: email,
+    subject: 'Por qué lo de antes no funcionó',
+    html: emailTemplate({
+      title: 'Por qué lo de antes no funcionó.',
+      body: buildEmail4Body(level),
+      ctaText: 'Ver el Protocolo completo →',
+      ctaUrl: 'https://www.neurobienestar.institute/protocolo',
+      footerNote: 'Sin spam. Puedes darte de baja en cualquier momento.',
+    }),
+  })
+  if (error) throw new Error(`Resend error: ${error.message}`)
+}
+
+// ─── Follow-up email 5: carta del fundador ────────────────────────────────────
+
+const LEVEL_DISPLAY: Record<string, string> = { rojo: 'rojo', amber: 'ámbar', verde: 'verde' }
+
+function buildEmail5Body(level: string): string {
+  const levelDisplay = LEVEL_DISPLAY[level] ?? level
+  return `
+    ${P('Te escribo esta vez sin oferta. Solo quiero contarte algo antes de dejar de aparecer en tu bandeja.')}
+    ${P('Durante 12 años arrastré lo mismo que probablemente te ha traído hasta aquí. Cansancio que el sueño no reparaba. Ansiedad de fondo. La sensación de ir siempre tarde a todo aunque no parara en todo el día. El cuerpo en alerta permanente sin saber por qué.')}
+    ${P('Probé lo previsible: meditación, retiros, psicólogos, médicos, suplementos, ejercicio, cambios de alimentación. Algunas cosas ayudaban un rato. Ninguna terminaba de recalibrar el sistema. Y cada intento fallido sumaba otra capa: la culpa de "estar haciendo algo mal", el estrés de no encontrar la respuesta, la sospecha de que quizás esto era lo que me tocaba.')}
+    ${P('El cambio empezó escuchando un audiolibro sobre neurociencia aplicada donde se mencionaba el nervio vago de pasada. Las técnicas que proponía requerían más tiempo del que yo tenía, así que me puse a estudiar por mi cuenta. Leí, investigué, probé. Llegué a un concepto que cambió todo: la ventana vagal. El sistema nervioso instala lo que recibe en estímulos cortos y precisos, no en sesiones largas que tu vida no permite.')}
+    ${P('De cientos de técnicas que probé, llegué a 7 que funcionaban: las más rápidas, las más medibles, las que producían un cambio en el primer minuto.')}
+    ${P('Desde la primera vez que apliqué la secuencia completa de 7 minutos noté cosas que no notaba desde hacía años. El cuerpo más ligero. El ánimo distinto al levantarme. La sensación de haber descansado de verdad.')}
+    ${P(`Construí el IEN para que esa información llegue a otras personas en la misma situación que yo estaba. Personas que saben que algo no va bien — aunque no sepan exactamente qué — y que llevan tiempo buscando respuestas. Personas que, como tú, completaron el test y recibieron un nivel ${levelDisplay} que confirma lo que el cuerpo lleva tiempo intentando decir.`)}
+    ${P('No te voy a pedir nada en este email. Si en algún momento quieres aplicar el Protocolo, sigue donde siempre:')}
+    ${P('<a href="https://www.neurobienestar.institute/protocolo" style="color:#2B7A8B;text-decoration:underline;font-family:Arial,sans-serif">https://www.neurobienestar.institute/protocolo</a>')}
+    ${P('Y si no, gracias por haber llegado hasta aquí. Espero que encuentres lo que tu sistema está pidiendo, sea con nosotros o por otro camino.')}
+  `
+}
+
+export async function sendFollowUpFinalLetterEmail(email: string, level: string): Promise<void> {
+  const { error } = await resend.emails.send({
+    from: 'Antonio del IEN <protocolo@neurobienestar.institute>',
+    to: email,
+    subject: 'Una cosa más antes de dejarte tranquilo',
+    html: emailTemplate({
+      title: 'Una cosa más antes de dejarte tranquilo.',
+      body: buildEmail5Body(level),
+      footerNote: 'Sin spam. Puedes darte de baja en cualquier momento.',
+    }),
+  })
+  if (error) throw new Error(`Resend error: ${error.message}`)
+}
+
 // ─── Result email ─────────────────────────────────────────────────────────────
 
 export async function sendResultEmail(email: string, level: string): Promise<void> {
