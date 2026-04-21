@@ -184,6 +184,51 @@ export async function sendFollowUpTechniqueEmail(email: string, level: string): 
   if (error) throw new Error(`Resend error: ${error.message}`)
 }
 
+// ─── Follow-up email 3: urgencia cualitativa ─────────────────────────────────
+
+const EMAIL3_CONTENT: Record<string, { levelPhrase: string; levelParagraph: string }> = {
+  rojo: {
+    levelPhrase: 'como tu nivel es rojo',
+    levelParagraph: 'Un sistema nervioso en modo supervivencia sostenido no mejora por sí solo. No hay proceso natural de recuperación en juego — solo hay un patrón que se refuerza cada día que el nervio vago sigue inhibido. Posponer no es ganar tiempo para pensarlo: es consolidar un poco más el patrón que te ha traído hasta aquí.',
+  },
+  amber: {
+    levelPhrase: 'como tu nivel es ámbar',
+    levelParagraph: 'La activación crónica no es un estado estático. Evoluciona. Un sistema que lleva meses encendido tiene dos caminos — y ambos pasan por lo que hagas en las próximas semanas. Si introduces el estímulo correcto, el cuerpo empieza a recalibrar. Si no, el patrón sigue instalándose hasta convertirse en modo supervivencia sostenido. Esa diferencia se decide ahora, no cuando tengas tiempo.',
+  },
+  verde: {
+    levelPhrase: 'como tu nivel es verde',
+    levelParagraph: 'El nivel verde es la ventana en la que el sistema todavía responde con facilidad, los patrones no se han consolidado, y los estímulos correctos producen cambios claros con poco esfuerzo. Esa ventana se cierra sola. No hay un día concreto en el que dejas de ser verde — pero cada mes que pasa, el cuerpo aprende un poco más a quedarse encendido. Intervenir en verde es preventivo. En ámbar se vuelve correctivo. En rojo, reconstructivo.',
+  },
+}
+
+function buildEmail3Body(level: string): string {
+  const c = EMAIL3_CONTENT[level] ?? EMAIL3_CONTENT.rojo
+  return `
+    ${P('Probablemente viste la oferta del Protocolo y la dejaste para después.')}
+    ${P(`Es la reacción más común, así que no te lo tomes mal. Pero ${c.levelPhrase}, te escribo esto con la honestidad que a veces falta en marketing:`)}
+    ${P(c.levelParagraph)}
+    ${P('No es catastrofismo. Es plasticidad neural. Las redes que se activan juntas, se cablean juntas — y cuanto más tiempo opera tu cuerpo fuera de su estado vagal óptimo, más se consolida ese patrón.')}
+    ${P('El precio sigue siendo 7€. La garantía de 30 días sigue siendo íntegra. Lo único que cambia es el tiempo que pasa mientras decides.')}
+    ${P('Si prefieres leerlo antes de decidir, aquí puedes ver qué incluye y cómo funciona la garantía:<br><a href="https://www.neurobienestar.institute/protocolo" style="color:#2B7A8B;text-decoration:underline;font-family:Arial,sans-serif">https://www.neurobienestar.institute/protocolo</a>')}
+  `
+}
+
+export async function sendFollowUpUrgencyEmail(email: string, level: string): Promise<void> {
+  const { error } = await resend.emails.send({
+    from: 'IEN · Instituto Español de Neurobienestar <protocolo@neurobienestar.institute>',
+    to: email,
+    subject: 'Si lo estás posponiendo, lee esto',
+    html: emailTemplate({
+      title: 'Si lo estás posponiendo, lee esto.',
+      body: buildEmail3Body(level),
+      ctaText: 'Acceder al Protocolo completo →',
+      ctaUrl: 'https://www.neurobienestar.institute/protocolo',
+      footerNote: 'Sin spam. Puedes darte de baja en cualquier momento.',
+    }),
+  })
+  if (error) throw new Error(`Resend error: ${error.message}`)
+}
+
 // ─── Result email ─────────────────────────────────────────────────────────────
 
 export async function sendResultEmail(email: string, level: string): Promise<void> {
