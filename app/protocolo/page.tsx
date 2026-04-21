@@ -7,7 +7,7 @@ import { events } from '@/lib/meta-pixel'
 const TECNICAS = [
   {
     id: 'T1', name: 'Espiración Larga', duration: '30 seg', via: 'vía respiratoria',
-    unlocked: true, note: 'Ya la tienes — enviada en el email',
+    unlocked: true, note: 'Vía de entrada — la más accesible, sin equipamiento.',
   },
   { id: 'T2', name: 'Zumbido Vagal',        duration: '60 seg',   via: 'vía laríngea',          unlocked: false },
   { id: 'T3', name: 'Mirada Suave',          duration: '90 seg',   via: 'vía visual',            unlocked: false },
@@ -154,42 +154,47 @@ export default function ProtocoloPage() {
               marginBottom: 18,
             }}>
               Hace unos días hiciste el test del Instituto Español de Neurobienestar.
-              Te enviamos la primera técnica del Método MAV — la Espiración Larga.
+              Ya conoces tu nivel de inhibición vagal.
             </p>
             <p style={{
               fontFamily: "'Source Serif 4', Georgia, serif",
               fontSize: 16,
               color: '#1A2326',
               lineHeight: 1.8,
-              marginBottom: 24,
+              marginBottom: 18,
             }}>
-              Si la has aplicado estos días, habrás comprobado algo importante sobre
-              tu sistema nervioso:
+              Lo que sigue es la pieza completa del protocolo:
+            </p>
+            <p style={{
+              fontFamily: "'Source Serif 4', Georgia, serif",
+              fontSize: 16,
+              color: '#1A2326',
+              lineHeight: 1.8,
+              marginBottom: 28,
+            }}>
+              Las 7 técnicas. Una por cada vía vagal del sistema nervioso autónomo.
+              Cada una activando una capa distinta del freno parasimpático. Cada una
+              sumando al efecto de las anteriores.
             </p>
 
-            <div style={{ textAlign: 'center', padding: '18px 0 22px' }}>
-              <span className="proto-respond" style={{
+            <div style={{
+              borderLeft: '3px solid #2B7A8B',
+              paddingLeft: 20,
+              margin: '0 0 4px',
+            }}>
+              <p style={{
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
-                fontSize: 'clamp(42px, 11vw, 58px)',
-                fontWeight: 600,
-                color: '#2B7A8B',
-                letterSpacing: '0.02em',
+                fontSize: 'clamp(18px, 4.5vw, 22px)',
+                fontWeight: 400,
+                fontStyle: 'italic',
+                color: '#1A2326',
+                lineHeight: 1.5,
+                margin: 0,
               }}>
-                Responde.
-              </span>
+                &ldquo;El nervio vago no responde al tiempo que le dedicas.
+                Responde a la precisión del estímulo.&rdquo;
+              </p>
             </div>
-
-            <p style={{
-              fontFamily: "'Source Serif 4', Georgia, serif",
-              fontSize: 16,
-              color: '#1A2326',
-              lineHeight: 1.8,
-              margin: 0,
-            }}>
-              Eso significa que las otras 6 técnicas — cada una activando una vía vagal
-              distinta — van a producir el mismo efecto medible, con cada vía sumando
-              a las anteriores.
-            </p>
           </div>
 
           {sep}
