@@ -205,7 +205,7 @@ function buildEmail3Body(level: string): string {
   const c = EMAIL3_CONTENT[level] ?? EMAIL3_CONTENT.rojo
   return `
     ${P('Probablemente viste la oferta del Protocolo y la dejaste para después.')}
-    ${P(`Es la reacción más común, así que no te lo tomes mal. Pero ${c.levelPhrase}, te escribo esto con la honestidad que a veces falta en marketing:`)}
+    ${P(`Es la reacción más común. Pero ${c.levelPhrase}, hay algo que deberías saber antes de seguir posponiéndolo:`)}
     ${P(c.levelParagraph)}
     ${P('No es catastrofismo. Es plasticidad neural. Las redes que se activan juntas, se cablean juntas — y cuanto más tiempo opera tu cuerpo fuera de su estado vagal óptimo, más se consolida ese patrón.')}
     ${P('El precio sigue siendo 7€. La garantía de 30 días sigue siendo íntegra. Lo único que cambia es el tiempo que pasa mientras decides.')}
