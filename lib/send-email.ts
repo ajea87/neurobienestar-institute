@@ -113,7 +113,7 @@ function buildFollowUpBody(intro: string, closing: string): string {
   return `
     ${P(intro)}
     ${P('No te hemos escrito antes porque queríamos enviarte la primera técnica del Método MAV cuando pudiéramos acompañarla de instrucciones claras, no de un anuncio. Aquí la tienes.')}
-    ${SECTION('Técnica 1 · Respiración 4-8')}
+    ${SECTION('Técnica 1 · Espiración Larga')}
     ${P('Es la primera del protocolo completo. La que tiene el mayor impacto inmediato sobre el tono vagal, medible en frecuencia cardíaca desde el primer minuto.')}
     ${SECTION('Cómo aplicarla:')}
     ${P('1.&nbsp; Siéntate con la espalda apoyada. No tumbado.<br>2.&nbsp; Inspira por la nariz contando hasta 4.<br>3.&nbsp; Exhala por la boca contando hasta 8. El doble de largo.<br>4.&nbsp; Repite 5 ciclos completos. Total: 60 segundos.')}
@@ -135,7 +135,7 @@ const FOLLOWUP_CONTENT: Record<string, { subject: string; preview: string; body:
       'Hace unos días hiciste el test del Instituto Español de Neurobienestar. Tu resultado fue nivel rojo: sistema nervioso en modo supervivencia sostenido.',
       `${P('Hazlo 5-6 veces al día durante 3 días. Después de eso, tu cuerpo empieza a pedir la técnica solo — señal de que el patrón empieza a reinstalarse.')}
       ${P('Importante: esta es la técnica que más impacto tiene cuando el sistema está en modo supervivencia. Pero sola no es suficiente para salir del patrón crónico. Es el cimiento. Las otras 6 técnicas del protocolo trabajan sobre capas distintas del sistema nervioso autónomo: el reflejo vagal por frío, la estimulación por contacto físico, la activación por sonido, la regulación por postura, y las otras.')}
-      ${P('Si al aplicar la técnica 4-8 durante estos días notas que algo se mueve — cansancio que baja, digestión que mejora, mente que empieza a parar — significa que tu sistema responde. Ese es el indicador de que el resto del método te va a funcionar también.')}`
+      ${P('Si al aplicar la técnica de Espiración Larga durante estos días notas que algo se mueve — cansancio que baja, digestión que mejora, mente que empieza a parar — significa que tu sistema responde. Ese es el indicador de que el resto del método te va a funcionar también.')}`
     ),
   },
   amber: {
@@ -145,8 +145,8 @@ const FOLLOWUP_CONTENT: Record<string, { subject: string; preview: string; body:
     body: buildFollowUpBody(
       'Hace unos días hiciste el test del Instituto Español de Neurobienestar. Tu resultado fue nivel ámbar: nervio vago inhibido en activación crónica.',
       `${P('Hazlo 5-6 veces al día durante 3 días. A partir del cuarto día, si tu nivel es ámbar, vas a notar que necesitas pedírselo al cuerpo con menos esfuerzo. El patrón empieza a instalarse solo.')}
-      ${P('En nivel ámbar la técnica 4-8 funciona rápido. Pero el sistema lleva tiempo pidiendo salir, y la respiración sola no termina de desmontar la activación crónica. Las otras 6 técnicas del Método MAV trabajan capas distintas: el reflejo vagal por frío, la estimulación por contacto, la activación por sonido, la regulación por postura, y las restantes.')}
-      ${P('Si al aplicar la técnica 4-8 durante estos días notas que algo cambia — tensión muscular que cede, sueño que mejora, menos reactividad digestiva — significa que tu sistema responde. Es el indicador de que el resto del método va a funcionar sobre ti.')}`
+      ${P('En nivel ámbar la técnica de Espiración Larga funciona rápido. Pero el sistema lleva tiempo pidiendo salir, y la respiración sola no termina de desmontar la activación crónica. Las otras 6 técnicas del Método MAV trabajan capas distintas: el reflejo vagal por frío, la estimulación por contacto, la activación por sonido, la regulación por postura, y las restantes.')}
+      ${P('Si al aplicar la técnica de Espiración Larga durante estos días notas que algo cambia — tensión muscular que cede, sueño que mejora, menos reactividad digestiva — significa que tu sistema responde. Es el indicador de que el resto del método va a funcionar sobre ti.')}`
     ),
   },
   verde: {
@@ -157,7 +157,7 @@ const FOLLOWUP_CONTENT: Record<string, { subject: string; preview: string; body:
       'Hace unos días hiciste el test del Instituto Español de Neurobienestar. Tu resultado fue nivel verde: señales tempranas de inhibición vagal.',
       `${P('Hazlo 3-4 veces al día durante una semana. Con el margen que te da el nivel verde, la técnica se instala rápido. En pocos días tu cuerpo la pide solo cuando detecta tensión.')}
       ${P('La ventaja de intervenir en nivel verde es que las 6 técnicas restantes del Método MAV trabajan de forma preventiva, no correctiva. Es más fácil instalar un patrón sano antes de que el sistema se atasque que desmontarlo después. Las otras 6 cubren capas que la respiración sola no alcanza: reflejo vagal por frío, estimulación por contacto, activación por sonido, postura, y otras.')}
-      ${P('Si al aplicar la técnica 4-8 durante estos días confirmas que tu sistema responde con facilidad, el siguiente paso natural es completar el método antes de que el patrón de inhibición escale.')}`
+      ${P('Si al aplicar la técnica de Espiración Larga durante estos días confirmas que tu sistema responde con facilidad, el siguiente paso natural es completar el método antes de que el patrón de inhibición escale.')}`
     ),
   },
 }
@@ -177,7 +177,7 @@ export async function sendFollowUpTechniqueEmail(email: string, level: string): 
       title: 'Toma esta técnica — empieza por aquí.',
       body: c.body,
       ctaText: c.cta,
-      ctaUrl: 'https://www.neurobienestar.institute/test',
+      ctaUrl: 'https://www.neurobienestar.institute/protocolo',
       footerNote: 'Sin spam. Puedes darte de baja en cualquier momento.',
     }),
   })
